@@ -1,4 +1,14 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+module.exports = {
+    reactStrictMode: true,
+    webpack(config) {
+        config.plugins.push(
+            require('unplugin-icons/webpack')({
+                compiler: 'jsx',
+                jsx: 'react',
+            }),
+        )
 
-module.exports = nextConfig
+        return config
+    },
+}
