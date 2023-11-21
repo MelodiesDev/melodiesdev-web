@@ -1,6 +1,4 @@
 "use client";
-
-import type { Metadata } from "next";
 import "./globals.css";
 import Image from "next/image";
 import Twitter from "~icons/fe/twitter";
@@ -14,7 +12,7 @@ import line from "@/assets/Line.svg";
 import clouds from "@/assets/clouds.svg";
 import star from "@/assets/stars.svg";
 import "@fontsource/nunito";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
