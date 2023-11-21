@@ -7,22 +7,20 @@ export default function Home() {
             href="/about"
             className="group rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:border-opacity-80 hover:outline-white"
           >
-            <h2 className={`mb-3 text-2xl font-semibold text-[#EAE2FF]`}>
-              Hey there! I'm Melody!{" "}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
+            <div className="flex flex-row justify-between">
+              <h2 className="mb-3 text-2xl font-semibold text-[#EAE2FF]">
+                Hey there! I'm Melody!{" "}
+              </h2>
+              <span className="inline-block font-normal transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                More -&gt;
               </span>
-            </h2>
+            </div>
             <p className={`text-md m-0 max-w-3xl font-normal text-[#EAE2FF]`}>
-              I'm 20 years old, I used to be a pro Overwatch player, competing
-              for cash prizes as a tank player in various tournaments. But now,
-              I've taken a fun detour! Over the last couple of months, I've been
-              diving headfirst into the world of web design. I'm already having
-              a blast and I'm even starting to get the hang of Java programming!
-              I'm all about creating awesome, interactive websites that catch
-              the eye. Combining my gaming background with design, I'm super
-              pumped to bring some exciting projects to life! I've had quite the
-              journey so far and I look excitedly towards the future,
+              I'm 20 years old and currently living in Australia, over the past
+              year I have been learning Web Design and Web Development to do as
+              my main job. Fun fact I used to play in Overwatch tournaments like
+              AOL playing in various teams before I did any of this... this is
+              way less stressful.
             </p>
           </a>
         </div>
@@ -38,10 +36,10 @@ export default function Home() {
               </span>
             </h2>
             <p className={`text-md m-0 max-w-3xl font-normal text-white`}>
-              I specialize in making unique and eye-catching website designs
-              that feel new, exciting, and inventive to use, ensuring your
-              digital presence stands out in a crowded online landscape and
-              leaves a lasting impression on your audience.
+              I love making fun and playful websites that look and feel
+              different and have a smooth user experience. Something unique is
+              what I do best so if thats what you're looking for you've come to
+              the right place!
             </p>
           </a>
         </div>
