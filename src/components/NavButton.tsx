@@ -7,10 +7,8 @@ interface NavButtonProps {
 
 export function NavButton({ href, text }: NavButtonProps) {
   return (
-    <a href={href}>
-      <div className="light-hover-glow dark:dark-hover-glow font-bold transition-all">
-        {text}
-      </div>
+    <a className="flex items-center justify-center" href={href}>
+      <div className="underlined-animate rounded-md transition-all">{text}</div>
     </a>
   );
 }
