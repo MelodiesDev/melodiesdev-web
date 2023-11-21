@@ -54,13 +54,15 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="flex w-full flex-row justify-between bg-gradient-to-b from-transparent to-pink-100 p-4">
+  <div className="flex w-full flex-row justify-between bg-gradient-to-b from-transparent to-purple-400/40 p-4">
     <div>
       <span className="font-normal text-black">
         Copyright © Melodies Development 2023
       </span>
     </div>
-    <NavButton href="/contact" text="Contact Me" />
+    <div className="dark:invert">
+      <NavButton href="/contact" text="Contact Me" />
+    </div>
   </div>
 );
 
