@@ -1,8 +1,10 @@
 export default function About() {
   return (
-    <main className="container flex">
-      <div className="mt-8 flex w-full justify-center text-6xl font-black text-white">
-        <h1>Here's a little bit more about me!</h1>
+    <main className="container mx-auto justify-center">
+      <div className="mt-8 flex w-full justify-center text-6xl">
+        <h1 className="font-black text-white">
+          Here's a little bit more about me!
+        </h1>
       </div>
       <div className="flex flex-col">
         <div className="mx-auto mt-32 flex justify-center">

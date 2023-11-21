@@ -1,4 +1,5 @@
 "use client";
+
 import "./globals.css";
 import Image from "next/image";
 import Twitter from "~icons/fe/twitter";
@@ -7,10 +8,10 @@ import Youtube from "~icons/fe/youtube";
 import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
-import melodiesdev from "@/assets/melodiesdev.svg";
-import line from "@/assets/Line.svg";
-import clouds from "@/assets/clouds.svg";
-import star from "@/assets/stars.svg";
+import MelodiesDev from "@/assets/melodiesdev.svg";
+import Line from "@/assets/Line.svg";
+import Clouds from "@/assets/clouds.svg";
+import Stars from "@/assets/stars.svg";
 import "@fontsource/nunito";
 import { AnimatePresence } from "framer-motion";
 
@@ -26,7 +27,7 @@ type RootLayoutProps = {
 const Header: FC = () => (
   <div className="container relative mx-auto flex px-16 pt-2">
     <div className="absolute -bottom-6 left-0 right-0">
-      <Image className="dark:invert" src={line} alt="line" />
+      <Image className="dark:invert" src={Line} alt="line" />
     </div>
     <div className="flex w-full justify-evenly">
       <div className="flex flex-1 items-center justify-start gap-3 pt-2 text-white">
@@ -35,7 +36,7 @@ const Header: FC = () => (
         <NavButton href="/blog" text="Blog" />
       </div>
       <div className="flex items-center justify-center pb-2">
-        <Image src={melodiesdev} alt="MelodiesDev" width="132" height="132" />
+        <Image src={MelodiesDev} alt="MelodiesDev" width="132" height="132" />
       </div>
       <div className="flex flex-1 items-center justify-end gap-6 fill-white pt-2">
         <LinkButton href="https://twitter.com/melodiesdev">
@@ -71,14 +72,14 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
           <div className="flex w-full flex-grow flex-col">
             <div className="relative w-full">
               <Image
-                src={star}
+                src={Stars}
                 alt="stars"
                 className="absolute -top-8 left-0 right-0"
                 layout="responsive"
               />
               <Image
                 className="absolute left-0 right-0 top-0 -z-0 opacity-50"
-                src={clouds}
+                src={Clouds}
                 alt="cloudsandstars"
                 layout="responsive"
               />
