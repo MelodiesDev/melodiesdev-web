@@ -9,13 +9,13 @@ export default function Home() {
           >
             <div className="flex flex-row justify-between">
               <h2 className="mb-3 text-2xl font-semibold text-[#EAE2FF]">
-                Hey there! I'm Melody!{" "}
+                Hey there! I'm Melody!
               </h2>
               <span className="inline-block font-normal transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 More -&gt;
               </span>
             </div>
-            <p className={`text-md m-0 max-w-3xl font-normal text-[#EAE2FF]`}>
+            <p className="text-md max-w-3xl font-normal text-[#EAE2FF]">
               I'm 20 years old and currently living in Australia, over the past
               year I have been learning Web Design and Web Development to do as
               my main job. Fun fact I used to play in Overwatch tournaments like

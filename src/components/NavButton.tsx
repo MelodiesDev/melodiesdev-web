@@ -1,14 +1,13 @@
 import React from "react";
 
-interface NavButtonProps {
-  href: string;
-  text: string;
-}
-
-export function NavButton({ href, text }: NavButtonProps) {
+export function NavButton({
+  href,
+  text
+}: React.PropsWithChildren<{ href: string; text: string }>) {
   return (
-    <a className="flex items-center justify-center" href={href}>
-      <div className="underlined-animate rounded-md transition-all">{text}</div>
+    <a className="group relative flex items-center justify-center" href={href}>
+      {text}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 bg-white transition-all group-hover:scale-x-100"></div>
     </a>
   );
 }

@@ -1,16 +1,14 @@
 import { motion } from "framer-motion";
 import React from "react";
 
-interface LinkButtonProps {
-  href: string;
-  children: React.ReactNode;
-}
-
-export function LinkButton({ href, children }: LinkButtonProps) {
+export function LinkButton({
+  href,
+  children
+}: React.PropsWithChildren<{ href: string }>) {
   return (
-    <a target="_blank" className="group" href={href} rel="noreferrer">
+    <a target="_blank" href={href} rel="noreferrer">
       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-        <div>{children}</div>
+        {children}
       </motion.div>
     </a>
   );

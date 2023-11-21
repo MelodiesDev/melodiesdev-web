@@ -23,33 +23,21 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-const BentLine: FC = () => (
-  <div className="dark:invert">
-    <Image src={line} alt="line" />
-  </div>
-);
-
 const Header: FC = () => (
-  <div className="relative mx-auto flex w-full max-w-5xl pt-6">
-    <div className="absolute -bottom-5 mx-auto">
-      <BentLine />
+  <div className="container relative mx-auto flex px-16 pt-2">
+    <div className="absolute -bottom-6 left-0 right-0">
+      <Image className="dark:invert" src={line} alt="line" />
     </div>
-    <div className="flex w-full justify-between px-8">
-      <div className="flex flex-1 items-center justify-start gap-3 pt-3 font-black text-black dark:invert">
+    <div className="flex w-full justify-evenly">
+      <div className="flex flex-1 items-center justify-start gap-3 pt-2 text-white">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
       </div>
       <div className="flex items-center justify-center pb-2">
-        <Image
-          className="invert dark:filter-none"
-          src={melodiesdev}
-          alt="MelodiesDev"
-          width="132"
-          height="132"
-        />
+        <Image src={melodiesdev} alt="MelodiesDev" width="132" height="132" />
       </div>
-      <div className="flex flex-1 items-center justify-end gap-6 fill-white pt-3 dark:fill-black">
+      <div className="flex flex-1 items-center justify-end gap-6 fill-white pt-2">
         <LinkButton href="https://twitter.com/melodiesdev">
           <Twitter />
         </LinkButton>
@@ -65,9 +53,11 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="flex w-full flex-row justify-between bg-gradient-to-b from-transparent to-pink-100 p-4 font-normal text-black">
+  <div className="flex w-full flex-row justify-between bg-gradient-to-b from-transparent to-pink-100 p-4">
     <div>
-      <span>Copyright © Melodies Development 2023</span>
+      <span className="font-normal text-black">
+        Copyright © Melodies Development 2023
+      </span>
     </div>
     <NavButton href="/contact" text="Contact Me" />
   </div>
