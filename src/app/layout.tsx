@@ -25,20 +25,20 @@ type RootLayoutProps = {
 };
 
 const Header: FC = () => (
-  <div className="container relative mx-auto flex px-16 pt-2">
+  <div className="container relative mx-auto flex px-16 pb-2 pt-2">
     <div className="absolute -bottom-6 left-0 right-0">
       <Image className="dark:invert" src={Line} alt="line" />
     </div>
     <div className="flex w-full justify-evenly">
-      <div className="flex flex-1 items-center justify-start gap-3 pt-2 text-white">
+      <div className="flex flex-1 items-center justify-start gap-3 text-white">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
       </div>
-      <div className="flex items-center justify-center pb-2">
+      <div className="flex items-center justify-center">
         <Image src={MelodiesDev} alt="MelodiesDev" width="132" height="132" />
       </div>
-      <div className="flex flex-1 items-center justify-end gap-6 fill-white pt-2">
+      <div className="flex flex-1 items-center justify-end gap-6 fill-white">
         <LinkButton href="https://twitter.com/melodiesdev">
           <Twitter />
         </LinkButton>

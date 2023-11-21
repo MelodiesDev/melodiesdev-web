@@ -7,8 +7,8 @@ export default function Home() {
             href="/about"
             className="group rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:border-opacity-80 hover:outline-white"
           >
-            <div className="flex flex-row justify-between">
-              <h2 className="mb-3 text-2xl font-semibold text-[#EAE2FF]">
+            <div className="mb-3 flex flex-row justify-between">
+              <h2 className="text-2xl font-semibold text-[#EAE2FF]">
                 Hey there! I'm Melody!
               </h2>
               <span className="inline-block font-normal transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
