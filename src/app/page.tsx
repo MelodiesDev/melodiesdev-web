@@ -4,7 +4,7 @@ import CartoonClouds from "@/assets/cartoonclouds.svg";
 export default function Home() {
   return (
     <main>
-      <div className="flex flex-col">
+      <div className="relative flex flex-col overflow-hidden">
         <div className="mx-auto mt-32 flex justify-center lg:w-full">
           <a
             href="/about"
@@ -50,7 +50,7 @@ export default function Home() {
           </a>
         </div>
         <Image
-          className="absolute -z-10 w-full"
+          className="absolute -z-10 "
           layout="responsive"
           src={CartoonClouds}
           alt="cartoonclouds"

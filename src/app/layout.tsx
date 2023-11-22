@@ -93,7 +93,9 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
             <Header />
             <div className="z-20 flex-grow">{children}</div>
           </div>
-          <Footer />
+          <div className="mt-16 w-full">
+            <Footer />
+          </div>
         </section>
       </body>
     </html>
