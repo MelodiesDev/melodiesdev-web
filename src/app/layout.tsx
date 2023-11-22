@@ -10,6 +10,7 @@ import MelodiesDev from "@/assets/melodiesdev.svg";
 import Line from "@/assets/Line.svg";
 import Clouds from "@/assets/clouds.svg";
 import Stars from "@/assets/stars.svg";
+import Icon from "@/assets/icon.png";
 import "@fontsource/nunito";
 import { Metadata } from "next";
 import { Providers } from "@/components/Providers";
@@ -34,15 +35,18 @@ const Header: FC = () => (
       />
     </div>
     <div className="flex w-full justify-evenly">
+      <div className="flex items-center justify-center sm:hidden">
+        <Image src={Icon} alt="MelodiesDev" width="132" height="132" />
+      </div>
       <div className="flex flex-1 items-center justify-start gap-3 text-white">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
       </div>
-      <div className="flex items-center justify-center">
+      <div className="hidden items-center justify-center sm:flex">
         <Image src={MelodiesDev} alt="MelodiesDev" width="132" height="132" />
       </div>
-      <div className="flex flex-1 items-center justify-end gap-6 fill-white">
+      <div className="hidden flex-1 items-center justify-end gap-6 fill-white sm:flex">
         <LinkButton href="https://twitter.com/melodiesdev">
           <Twitter />
         </LinkButton>

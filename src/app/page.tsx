@@ -55,11 +55,8 @@ export default function Home() {
           src={CartoonClouds}
           alt="cartoonclouds"
         />
-        <div className="mx-auto flex justify-center pt-16 lg:w-full">
-          <a
-            href="/projects"
-            className="group mx-32 h-96 w-full rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"
-          ></a>
+        <div className="mx-auto flex w-full justify-center pt-16">
+          <a className="group mx-32 h-96 w-full rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"></a>
         </div>
       </div>
     </main>
