@@ -1,3 +1,6 @@
+import Image from "next/image";
+import CartoonClouds from "@/assets/cartoonclouds.svg";
+
 export default function Home() {
   return (
     <main>
@@ -24,24 +27,39 @@ export default function Home() {
             </p>
           </a>
         </div>
-        <div className="mx-auto flex justify-center pt-16 lg:w-full">
+        <div className="mx-auto flex justify-center pt-8 lg:w-full">
           <a
             href="/projects"
             className="group rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"
           >
-            <h2 className={`mb-3 text-2xl font-semibold`}>
-              What I Do!{" "}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
-              </span>
-            </h2>
-            <p className={`text-md m-0 max-w-3xl font-normal text-white`}>
+            <h2 className="mb-3 text-2xl font-semibold">What I Do!</h2>
+            <p className="text-md max-w-3xl font-normal text-white">
               I love making fun and playful websites that look and feel
               different and have a smooth user experience. Something unique is
               what I do best so if thats what you're looking for you've come to
               the right place!
             </p>
           </a>
+        </div>
+        <div className="mx-auto flex justify-center pt-16 lg:w-full">
+          <a
+            href="/projects"
+            className="group rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"
+          >
+            <h2 className="text-4xl font-semibold">Previous Projects</h2>
+          </a>
+        </div>
+        <Image
+          className="absolute -z-10 w-full"
+          layout="responsive"
+          src={CartoonClouds}
+          alt="cartoonclouds"
+        />
+        <div className="mx-auto flex justify-center pt-16 lg:w-full">
+          <a
+            href="/projects"
+            className="group mx-32 h-96 w-full rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"
+          ></a>
         </div>
       </div>
     </main>
