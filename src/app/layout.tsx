@@ -27,7 +27,12 @@ type RootLayoutProps = {
 const Header: FC = () => (
   <div className="container relative mx-auto flex px-16 pb-2 pt-2">
     <div className="absolute -bottom-6 left-0 right-0">
-      <Image className="fill dark:invert" src={Line} alt="line" />
+      <Image
+        className="fill left-0 right-0 dark:invert"
+        src={Line}
+        alt="line"
+        style={{ width: "100%" }}
+      />
     </div>
     <div className="flex w-full justify-evenly">
       <div className="flex items-center justify-center sm:hidden">
