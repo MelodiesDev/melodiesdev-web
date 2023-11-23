@@ -75,9 +75,9 @@ const Footer: FC = () => (
 );
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
-  <Providers>
-    <html lang="en">
-      <body>
+  <html lang="en">
+    <body>
+      <Providers>
         <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
           <div className="flex w-full flex-grow flex-col">
             <div className="relative w-full">
@@ -101,9 +101,9 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
             <Footer />
           </div>
         </section>
-      </body>
-    </html>
-  </Providers>
+      </Providers>
+    </body>
+  </html>
 );
 
 export default RootLayout;

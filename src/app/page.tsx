@@ -5,8 +5,9 @@ import { TextBlock } from "@/components/TextBlock";
 export default function Home() {
   return (
     <main>
-      <div className="relative mt-32 flex flex-col gap-16 overflow-hidden">
+      <div className="relative flex flex-col overflow-hidden">
         <TextBlock
+          isRightArrowVisible={true}
           header="Hey there! I'm Melody!"
           href="/about"
           body="I'm 20 years old and currently living in Australia, over the
@@ -16,6 +17,7 @@ export default function Home() {
                   of this... this is way less stressful."
         />
         <TextBlock
+          isRightArrowVisible={true}
           href="/projects"
           header="What I Do!"
           body="I love making fun and playful websites that look and feel
@@ -23,6 +25,7 @@ export default function Home() {
               what I do best so if thats what you're looking for you've come to
               the right place!"
         />
+        <TextBlock header="Previous Work" />
         <div>
           <Image
             className="fill absolute top-0 -z-10"
@@ -30,9 +33,6 @@ export default function Home() {
             alt="cartoonclouds"
             style={{ width: "100%", height: "100%" }}
           />
-        </div>
-        <div className="mx-auto flex w-full justify-center pt-16">
-          <a className="group mx-32 h-96 w-full rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"></a>
         </div>
       </div>
     </main>
