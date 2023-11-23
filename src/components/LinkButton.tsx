@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import React from "react";
 
 export function LinkButton({
@@ -8,10 +5,10 @@ export function LinkButton({
   children
 }: React.PropsWithChildren<{ href: string }>) {
   return (
-    <a target="_blank" href={href} rel="noreferrer">
-      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+    <a className="group" target="_blank" href={href} rel="noreferrer">
+      <div className="group-hover:-translate-y-1 group-hover:-rotate-12 transition-all">
         {children}
-      </motion.div>
+      </div>
     </a>
   );
 }
