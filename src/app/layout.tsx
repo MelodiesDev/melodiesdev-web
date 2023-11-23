@@ -36,7 +36,11 @@ const Header: FC = () => (
     </div>
     <div className="flex w-full justify-evenly">
       <div className="flex items-center justify-center sm:hidden">
-        <Image src={Icon} alt="MelodiesDev" width="132" height="132" />
+        <Image
+          src={Icon}
+          alt="MelodiesDev"
+          style={{ width: "auto", height: "auto" }}
+        />
       </div>
       <div className="flex flex-1 items-center justify-start gap-3 text-white">
         <NavButton href="/" text="Home" />
