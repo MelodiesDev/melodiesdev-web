@@ -27,6 +27,7 @@ export default function Home() {
         />
         <div>
           <Image
+            loading="eager"
             className="fill absolute top-0 -z-10"
             src={CartoonClouds}
             alt="cartoonclouds"
