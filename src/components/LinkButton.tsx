@@ -2,15 +2,15 @@ import React from "react";
 
 export function LinkButton({
   href,
-  arialabel,
+  label,
   children
-}: React.PropsWithChildren<{ href: string; arialabel: string }>) {
+}: React.PropsWithChildren<{ href: string; label: string }>) {
   return (
     <a
       className="group"
       target="_blank"
       href={href}
-      aria-label={arialabel}
+      aria-label={label}
       rel="noreferrer"
     >
       <div className="group-hover:-translate-y-1 group-hover:-rotate-12 transition-all">
