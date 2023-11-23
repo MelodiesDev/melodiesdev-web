@@ -17,10 +17,10 @@ export function TextBlock({
 }: React.PropsWithChildren<TextBlockProps>) {
   return (
     <Glow color="white" debug={false} style={{}} className="">
-      <div className="mx-auto my-16 flex justify-center lg:w-full">
+      <div className="container flex mx-auto">
         <a
           href={href}
-          className="rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline-glow transition-all glow:bg-glow glow:outline glow:outline-white"
+          className="flex w-full flex-col m-1 rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline-glow glow:bg-glow glow:outline glow:outline-white"
         >
           <div className="flex flex-row justify-between">
             <div className="text-2xl font-semibold text-[#EAE2FF]">
@@ -28,9 +28,7 @@ export function TextBlock({
             </div>
             {isRightArrowVisible && <RightArrow />}
           </div>
-          <div className="text-md max-w-3xl font-normal text-[#EAE2FF]">
-            {body}
-          </div>
+          <div className="text-md font-normal text-[#EAE2FF]">{body}</div>
         </a>
       </div>
     </Glow>

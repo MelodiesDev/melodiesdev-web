@@ -11,7 +11,7 @@ import Line from "@/assets/Line.svg";
 import Clouds from "@/assets/clouds.svg";
 import Stars from "@/assets/stars.svg";
 import Icon from "@/assets/icon.png";
-import "@fontsource/nunito";
+import { Nunito } from "next/font/google";
 import { Metadata } from "next";
 import { Providers } from "@/components/Providers";
 
@@ -24,31 +24,36 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
+const nunito = Nunito({ subsets: ["latin"] });
+
 const Header: FC = () => (
   <div className="container relative mx-auto flex px-16 pb-2 pt-2">
-    <div className="absolute -bottom-6 left-0 right-0">
+    <Image
+      className="hidden sm:block absolute -bottom-6 left-0 right-0 dark:invert"
+      loading="eager"
+      src={Line}
+      alt="line"
+      style={{ width: "100%" }}
+    />
+    <div className="flex w-full justify-between">
       <Image
-        className="fill left-0 right-0 dark:invert"
-        src={Line}
-        alt="line"
-        style={{ width: "100%" }}
+        loading="eager"
+        className="sm:hidden block w-16 h-16 object-contain"
+        src={Icon}
+        alt="MelodiesDev"
       />
-    </div>
-    <div className="flex w-full justify-evenly">
-      <div className="flex items-center justify-center sm:hidden">
-        <Image
-          src={Icon}
-          alt="MelodiesDev"
-          style={{ width: "auto", height: "auto" }}
-        />
-      </div>
-      <div className="flex flex-1 items-center justify-start gap-3 text-white">
+      <div className="flex flex-1 items-center justify-end gap-3 text-white sm:justify-start">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
       </div>
       <div className="hidden items-center justify-center sm:flex">
-        <Image src={MelodiesDev} alt="MelodiesDev" width="132" height="132" />
+        <Image
+          loading="eager"
+          className="h-16 aspect-auto"
+          src={MelodiesDev}
+          alt="MelodiesDev"
+        />
       </div>
       <div className="hidden flex-1 items-center justify-end gap-6 fill-white sm:flex">
         <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
@@ -83,34 +88,28 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
-    <body>
-      <Providers>
-        <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
-          <div className="flex w-full flex-grow flex-col">
-            <div className="relative w-full">
-              <Image
-                loading="eager"
-                src={Stars}
-                alt="stars"
-                className="absolute left-0 right-0 top-0"
-                style={{ width: "100%" }}
-              />
-              <Image
-                loading="eager"
-                className="absolute left-0 right-0 top-0 -z-0 opacity-50"
-                src={Clouds}
-                alt="cloudsandstars"
-                style={{ width: "100%" }}
-              />
-            </div>
-            <Header />
-            <div className="z-20 flex-grow">{children}</div>
-          </div>
-          <div className="mt-16 w-full">
-            <Footer />
-          </div>
-        </section>
-      </Providers>
+    <body className={nunito.className}>
+      <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+        <div className="relative flex-1 w-full">
+          <Image
+            loading="eager"
+            src={Stars}
+            alt="stars"
+            className="absolute left-0 right-0 top-0"
+            style={{ width: "100%" }}
+          />
+          <Image
+            loading="eager"
+            className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+            src={Clouds}
+            alt="cloudsandstars"
+            style={{ width: "100%" }}
+          />
+          <Header />
+          <Providers>{children}</Providers>
+        </div>
+        <Footer />
+      </section>
     </body>
   </html>
 );

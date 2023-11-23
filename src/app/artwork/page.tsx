@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Blog() {
   return (
     <main>
-      <div className="mt-8 flex w-full justify-center">
+      <div className="mt-16 flex w-full justify-center">
         <h1 className="text-6xl font-black text-white">
           Here's all my commissioned artwork!
         </h1>

@@ -3,7 +3,7 @@ import { TextBlock } from "@/components/TextBlock";
 export default function About() {
   return (
     <main className="container mx-auto justify-center">
-      <div className="mt-8 flex w-full justify-center">
+      <div className="mt-16 flex w-full justify-center">
         <h1 className="text-6xl font-black text-white">
           Here's a little bit more about me!
         </h1>
