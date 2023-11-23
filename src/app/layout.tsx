@@ -51,13 +51,22 @@ const Header: FC = () => (
         <Image src={MelodiesDev} alt="MelodiesDev" width="132" height="132" />
       </div>
       <div className="hidden flex-1 items-center justify-end gap-6 fill-white sm:flex">
-        <LinkButton href="https://twitter.com/melodiesdev">
+        <LinkButton
+          href="https://twitter.com/melodiesdev"
+          arialabel="My Twitter!"
+        >
           <Twitter />
         </LinkButton>
-        <LinkButton href="https://github.com/melodiesdev">
+        <LinkButton
+          href="https://github.com/melodiesdev"
+          arialabel="My Github!"
+        >
           <Github />
         </LinkButton>
-        <LinkButton href="https://youtube.com/@MelodiesDevelopment">
+        <LinkButton
+          href="https://youtube.com/@MelodiesDevelopment"
+          arialabel="My Youtube!"
+        >
           <Youtube />
         </LinkButton>
       </div>
