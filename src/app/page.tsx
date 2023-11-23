@@ -24,8 +24,7 @@ export default function Home() {
               the right place!"
         />
         <Image
-          className="absolute -z-10 "
-          layout="responsive"
+          className="fill absolute -z-10"
           src={CartoonClouds}
           alt="cartoonclouds"
         />

@@ -27,12 +27,7 @@ type RootLayoutProps = {
 const Header: FC = () => (
   <div className="container relative mx-auto flex px-16 pb-2 pt-2">
     <div className="absolute -bottom-6 left-0 right-0">
-      <Image
-        layout="responsive"
-        className="dark:invert"
-        src={Line}
-        alt="line"
-      />
+      <Image className="fill dark:invert" src={Line} alt="line" />
     </div>
     <div className="flex w-full justify-evenly">
       <div className="flex items-center justify-center sm:hidden">
@@ -84,14 +79,12 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
               <Image
                 src={Stars}
                 alt="stars"
-                className="absolute -top-7 left-0 right-0"
-                layout="responsive"
+                className="fill absolute left-0 right-0 top-0"
               />
               <Image
-                className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+                className="fill absolute left-0 right-0 top-0 -z-0 opacity-50"
                 src={Clouds}
                 alt="cloudsandstars"
-                layout="responsive"
               />
             </div>
             <Header />
