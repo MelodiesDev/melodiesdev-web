@@ -8,7 +8,6 @@ import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
 import MelodiesDev from "@/assets/melodiesdev.svg";
 import Line from "@/assets/Line.svg";
-import Clouds from "@/assets/clouds.svg";
 import Stars from "@/assets/stars.svg";
 import Icon from "@/assets/icon.png";
 import "@fontsource/nunito";
@@ -92,12 +91,6 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
                 src={Stars}
                 alt="stars"
                 className="absolute left-0 right-0 top-0"
-                style={{ width: "100%" }}
-              />
-              <Image
-                className="absolute left-0 right-0 top-0 -z-0 opacity-50"
-                src={Clouds}
-                alt="cloudsandstars"
                 style={{ width: "100%" }}
               />
             </div>
