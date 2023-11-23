@@ -17,7 +17,7 @@ export function TextBlock({
         <div className="mx-auto my-1 flex justify-center lg:w-full">
           <a
             href={href}
-            className="glow:bg-glow glow:outline-white glow:outline outline-glow rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 ease-in"
+            className="outline-glow glow:bg-glow glow:outline glow:outline-white rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 transition-all"
           >
             <div className="mb-3 flex flex-row justify-between">
               <div className="text-2xl font-semibold text-[#EAE2FF]">
