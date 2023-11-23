@@ -25,7 +25,6 @@ export default function Home() {
               what I do best so if thats what you're looking for you've come to
               the right place!"
         />
-        <TextBlock header="Previous Work" />
         <div>
           <Image
             className="fill absolute top-0 -z-10"
