@@ -10,15 +10,14 @@
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}'"
   },
   "dependencies": {
-    "@codaworks/react-glow": "^1.0.3",
-    "@fontsource/nunito": "^5.0.15",
-    "framer-motion": "^10.16.5",
     "next": "14.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@codaworks/react-glow": "^1.0.3",
+    "@fontsource/nunito": "^5.0.15",
+    "framer-motion": "^10.16.5",
     "@iconify/json": "^2.2.145",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
