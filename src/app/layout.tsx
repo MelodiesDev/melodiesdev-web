@@ -79,12 +79,14 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
               <Image
                 src={Stars}
                 alt="stars"
-                className="fill absolute left-0 right-0 top-0"
+                className="absolute left-0 right-0 top-0"
+                style={{ width: "100%" }}
               />
               <Image
-                className="fill absolute left-0 right-0 top-0 -z-0 opacity-50"
+                className="absolute left-0 right-0 top-0 -z-0 opacity-50"
                 src={Clouds}
                 alt="cloudsandstars"
+                style={{ width: "100%" }}
               />
             </div>
             <Header />

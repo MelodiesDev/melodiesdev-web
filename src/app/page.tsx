@@ -5,7 +5,7 @@ import { TextBlock } from "@/components/TextBlock";
 export default function Home() {
   return (
     <main>
-      <div className="relative mt-32 flex flex-col gap-16">
+      <div className="relative mt-32 flex flex-col gap-16 overflow-hidden">
         <TextBlock
           header="Hey there! I'm Melody!"
           href="/about"
@@ -23,11 +23,14 @@ export default function Home() {
               what I do best so if thats what you're looking for you've come to
               the right place!"
         />
-        <Image
-          className="fill absolute -z-10"
-          src={CartoonClouds}
-          alt="cartoonclouds"
-        />
+        <div>
+          <Image
+            className="fill absolute top-0 -z-10"
+            src={CartoonClouds}
+            alt="cartoonclouds"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </div>
         <div className="mx-auto flex w-full justify-center pt-16">
           <a className="group mx-32 h-96 w-full rounded-2xl  bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline outline-1 outline-transparent transition-all hover:rounded-xl hover:outline-white"></a>
         </div>
