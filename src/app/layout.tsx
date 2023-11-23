@@ -89,12 +89,14 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
           <div className="flex w-full flex-grow flex-col">
             <div className="relative w-full">
               <Image
+                loading="eager"
                 src={Stars}
                 alt="stars"
                 className="absolute left-0 right-0 top-0"
                 style={{ width: "100%" }}
               />
               <Image
+                loading="eager"
                 className="absolute left-0 right-0 top-0 -z-0 opacity-50"
                 src={Clouds}
                 alt="cloudsandstars"
