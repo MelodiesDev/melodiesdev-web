@@ -1,5 +1,3 @@
-import Image from "next/image";
-import CartoonClouds from "@/assets/cartoonclouds.svg";
 import { TextBlock } from "@/components/TextBlock";
 
 export default function Home() {
@@ -25,15 +23,7 @@ export default function Home() {
               what I do best so if thats what you're looking for you've come to
               the right place!"
         />
-        <div>
-          <Image
-            loading="eager"
-            className="fill absolute top-0 -z-10"
-            src={CartoonClouds}
-            alt="cartoonclouds"
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
+        <div></div>
       </div>
     </main>
   );
