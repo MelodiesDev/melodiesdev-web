@@ -3,7 +3,7 @@ import { TextBlock } from "@/components/TextBlock";
 export default function Home() {
   return (
     <main>
-      <div className="relative flex flex-col overflow-hidden">
+      <div className="flex flex-col md:mx-16 lg:mx-64 py-32 gap-8">
         <TextBlock
           isRightArrowVisible={true}
           header="Hey there! I'm Melody!"
@@ -23,7 +23,6 @@ export default function Home() {
               what I do best so if thats what you're looking for you've come to
               the right place!"
         />
-        <div></div>
       </div>
     </main>
   );

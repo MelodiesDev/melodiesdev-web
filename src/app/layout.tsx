@@ -26,23 +26,19 @@ type RootLayoutProps = {
 
 const Header: FC = () => (
   <div className="container relative mx-auto flex px-16 pb-2 pt-2">
-    <div className="absolute -bottom-6 left-0 right-0">
+    <Image
+      className="hidden sm:block absolute -bottom-6 left-0 right-0 dark:invert"
+      src={Line}
+      alt="line"
+      style={{ width: "100%" }}
+    />
+    <div className="flex w-full justify-between">
       <Image
-        className="fill left-0 right-0 dark:invert"
-        src={Line}
-        alt="line"
-        style={{ width: "100%" }}
+        className="sm:hidden block w-16 h-16 object-contain"
+        src={Icon}
+        alt="MelodiesDev"
       />
-    </div>
-    <div className="flex w-full justify-evenly">
-      <div className="flex items-center justify-center sm:hidden">
-        <Image
-          src={Icon}
-          alt="MelodiesDev"
-          style={{ width: "auto", height: "auto" }}
-        />
-      </div>
-      <div className="flex flex-1 items-center justify-start gap-3 text-white">
+      <div className="flex flex-1 items-center justify-end gap-3 text-white sm:justify-start">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
@@ -84,33 +80,27 @@ const Footer: FC = () => (
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body>
-      <Providers>
-        <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
-          <div className="flex w-full flex-grow flex-col">
-            <div className="relative w-full">
-              <Image
-                loading="eager"
-                src={Stars}
-                alt="stars"
-                className="absolute left-0 right-0 top-0"
-                style={{ width: "100%" }}
-              />
-              <Image
-                loading="eager"
-                className="absolute left-0 right-0 top-0 -z-0 opacity-50"
-                src={Clouds}
-                alt="cloudsandstars"
-                style={{ width: "100%" }}
-              />
-            </div>
-            <Header />
-            <div className="z-20 flex-grow">{children}</div>
-          </div>
-          <div className="mt-16 w-full">
-            <Footer />
-          </div>
-        </section>
-      </Providers>
+      <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+        <div className="relative flex-1 w-full">
+          <Image
+            loading="eager"
+            src={Stars}
+            alt="stars"
+            className="absolute left-0 right-0 top-0"
+            style={{ width: "100%" }}
+          />
+          <Image
+            loading="eager"
+            className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+            src={Clouds}
+            alt="cloudsandstars"
+            style={{ width: "100%" }}
+          />
+          <Header />
+          <Providers>{children}</Providers>
+        </div>
+        <Footer />
+      </section>
     </body>
   </html>
 );
