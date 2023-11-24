@@ -42,7 +42,7 @@ const Header: FC = () => (
         src={Icon}
         alt="MelodiesDev"
       />
-      <div className="flex flex-1 items-center justify-end gap-3 text-white sm:justify-start">
+      <div className="flex flex-1 items-center justify-end gap-3 text-white font-bold sm:justify-start">
         <NavButton href="/" text="Home" />
         <NavButton href="/artwork" text="Artwork" />
         <NavButton href="/blog" text="Blog" />
@@ -89,26 +89,26 @@ const Footer: FC = () => (
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
-      <section className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
-        <div className="relative flex-1 w-full">
-          <Image
-            loading="eager"
-            src={Stars}
-            alt="stars"
-            className="absolute left-0 right-0 top-0"
-            style={{ width: "100%" }}
-          />
-          <Image
-            loading="eager"
-            className="absolute left-0 right-0 top-0 -z-0 opacity-50"
-            src={Clouds}
-            alt="cloudsandstars"
-            style={{ width: "100%" }}
-          />
-          <Header />
-          <Providers>{children}</Providers>
+      <section className="flex min-h-screen flex-col bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+        <Image
+          loading="eager"
+          src={Stars}
+          alt="stars"
+          className="absolute left-0 right-0 top-0"
+          style={{ width: "100%" }}
+        />
+        <Image
+          loading="eager"
+          className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+          src={Clouds}
+          alt="cloudsandstars"
+          style={{ width: "100%" }}
+        />
+        <Header />
+        <Providers>{children}</Providers>
+        <div className="absolute bottom-0 w-full">
+          <Footer />
         </div>
-        <Footer />
       </section>
     </body>
   </html>
