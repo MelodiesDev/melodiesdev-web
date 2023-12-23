@@ -90,7 +90,7 @@ const Footer: FC = () => (
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
-      <section className="flex min-h-screen flex-col bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+      <section className="relative overflow-hidden flex min-h-screen flex-col bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
         <Image
           loading="eager"
           src={Stars}
