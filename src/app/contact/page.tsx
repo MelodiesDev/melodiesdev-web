@@ -18,7 +18,7 @@ export default function Contact() {
 
   return (
     <GlowCapture>
-      <Glow color="white" debug={false} style={{}} className="">
+      <Glow color="white" debug={false} className="">
         <main className="container mx-auto mt-16">
           <div className="flex w-full justify-center">
             <h1 className="text-6xl font-black text-white">

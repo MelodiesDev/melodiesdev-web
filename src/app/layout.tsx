@@ -14,6 +14,7 @@ import Icon from "@/assets/icon.png";
 import { Nunito } from "next/font/google";
 import { Metadata } from "next";
 import { Providers } from "@/components/Providers";
+import CartoonClouds from "@/assets/cartoonclouds.svg";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -27,7 +28,7 @@ type RootLayoutProps = {
 const nunito = Nunito({ subsets: ["latin"] });
 
 const Header: FC = () => (
-  <div className="container relative mx-auto flex px-16 pb-2 pt-2">
+  <div className="container relative mx-auto flex px-16 pb-2 pt-2 z-10">
     <Image
       className="hidden sm:block absolute -bottom-6 left-0 right-0 dark:invert"
       loading="eager"
@@ -50,7 +51,7 @@ const Header: FC = () => (
       <div className="hidden items-center justify-center sm:flex">
         <Image
           loading="eager"
-          className="h-16 aspect-auto"
+          className="h-16 aspect-auto hover:scale-105 transition-all"
           src={MelodiesDev}
           alt="MelodiesDev"
         />
@@ -74,7 +75,7 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="flex w-full flex-row justify-between bg-gradient-to-b from-transparent to-purple-400/40 p-4">
+  <div className="flex fixed bottom-0 w-full flex-row justify-between bg-gradient-to-b from-transparent z-10 to-purple-400/40 p-4">
     <div>
       <span className="font-normal text-black">
         Copyright © Melodies Development 2023
@@ -94,7 +95,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
           loading="eager"
           src={Stars}
           alt="stars"
-          className="absolute left-0 right-0 top-0"
+          className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all"
           style={{ width: "100%" }}
         />
         <Image
@@ -105,6 +106,12 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
           style={{ width: "100%" }}
         />
         <Header />
+        <Image
+          src={CartoonClouds}
+          alt="cartoonclouds"
+          className="sm:flex hidden z-0 animate-cloudmovement absolute bottom-0 transformY transition-all"
+          style={{ width: "100%" }}
+        />
         <Providers>{children}</Providers>
         <div className="absolute bottom-0 w-full">
           <Footer />

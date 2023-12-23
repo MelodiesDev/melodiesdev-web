@@ -16,7 +16,7 @@ export function TextBlock({
   isRightArrowVisible
 }: React.PropsWithChildren<TextBlockProps>) {
   return (
-    <Glow color="white" debug={false} style={{}} className="">
+    <Glow color="white">
       <div className="container flex mx-auto">
         <a
           href={href}
