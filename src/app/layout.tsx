@@ -109,7 +109,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
         <Image
           src={CartoonClouds}
           alt="cartoonclouds"
-          className="sm:flex hidden z-0 animate-cloudmovement absolute bottom-0 transformY transition-all"
+          className="sm:flex hidden scale-150 z-0 animate-cloudmovement blur-sm absolute bottom-0 transformY transition-all"
           style={{ width: "100%" }}
         />
         <Providers>{children}</Providers>

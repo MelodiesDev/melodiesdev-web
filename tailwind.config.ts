@@ -22,7 +22,7 @@ const config: Config = {
       },
       animation: {
         breathing: "breathing 8s linear infinite",
-        cloudmovement: "cloudmovement 30s linear infinite"
+        cloudmovement: "cloudmovement 60s linear infinite"
       }
     }
   },
