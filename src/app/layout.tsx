@@ -7,14 +7,11 @@ import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
 import MelodiesDev from "@/assets/melodiesdev.svg";
-import Line from "@/assets/Line.svg";
 import Clouds from "@/assets/clouds.svg";
-import Stars from "@/assets/stars.svg";
 import Icon from "@/assets/icon.png";
 import { Nunito } from "next/font/google";
 import { Metadata } from "next";
-import { Providers } from "@/components/Providers";
-import CartoonClouds from "@/assets/cartoonclouds.svg";
+import { Stars } from "@/components/Stars";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -28,60 +25,51 @@ type RootLayoutProps = {
 const nunito = Nunito({ subsets: ["latin"] });
 
 const Header: FC = () => (
-  <div className="container relative mx-auto flex px-16 pb-2 pt-2 z-10">
+  <div className="relative flex flex-col items-center mx-auto sm:mt-40 z-10 sm:gap-4">
+    <div className="flex flex-row gap-3 pt-8 text-white font-bold">
+      <NavButton href="/" text="Home" />
+      <NavButton href="/artwork" text="Artwork" />
+      <NavButton href="/blog" text="Blog" />
+    </div>
     <Image
-      className="hidden sm:block absolute -bottom-6 left-0 right-0 dark:invert"
       loading="eager"
-      src={Line}
-      alt="line"
-      style={{ width: "100%" }}
+      className="sm:hidden block h-32 w-36"
+      src={Icon}
+      alt="MelodiesDev"
     />
-    <div className="flex w-full justify-between">
+    <div className="hidden sm:flex">
       <Image
         loading="eager"
-        className="sm:hidden block w-16 h-16 object-contain"
-        src={Icon}
+        className="h-16 w-32 hover:scale-105 transition-all"
+        src={MelodiesDev}
         alt="MelodiesDev"
       />
-      <div className="flex flex-1 items-center justify-end gap-3 text-white font-bold sm:justify-start">
-        <NavButton href="/" text="Home" />
-        <NavButton href="/artwork" text="Artwork" />
-        <NavButton href="/blog" text="Blog" />
-      </div>
-      <div className="hidden items-center justify-center sm:flex">
-        <Image
-          loading="eager"
-          className="h-16 aspect-auto hover:scale-105 transition-all"
-          src={MelodiesDev}
-          alt="MelodiesDev"
-        />
-      </div>
-      <div className="hidden flex-1 items-center justify-end gap-6 fill-white sm:flex">
-        <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
-          <Twitter />
-        </LinkButton>
-        <LinkButton href="https://github.com/melodiesdev" label="My Github!">
-          <Github />
-        </LinkButton>
-        <LinkButton
-          href="https://youtube.com/@MelodiesDevelopment"
-          label="My Youtube!"
-        >
-          <Youtube />
-        </LinkButton>
-      </div>
+    </div>
+    <div className="gap-6 fill-white flex flex-row">
+      <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
+        <Twitter />
+      </LinkButton>
+      <LinkButton href="https://github.com/melodiesdev" label="My Github!">
+        <Github />
+      </LinkButton>
+      <LinkButton
+        href="https://youtube.com/@MelodiesDevelopment"
+        label="My Youtube!"
+      >
+        <Youtube />
+      </LinkButton>
     </div>
   </div>
 );
 
 const Footer: FC = () => (
-  <div className="flex fixed bottom-0 w-full flex-row justify-between bg-gradient-to-b from-transparent z-10 to-purple-400/40 p-4">
+  <div className="flex absolute bottom-0 w-full flex-row justify-between p-4 bg-gradient-to-b from-transparent to-black/30">
     <div>
-      <span className="font-normal text-black">
+      <span className="text-sm font-normal">
         Copyright © Melodies Development 2023
       </span>
     </div>
-    <div className="dark:invert">
+    <div className="text-sm font-normal">
       <NavButton href="/contact" text="Contact Me" />
     </div>
   </div>
@@ -90,32 +78,20 @@ const Footer: FC = () => (
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
-      <section className="relative overflow-hidden flex min-h-screen flex-col bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+      <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
+        <div className="absolute left-0 right-0 top-0 z-0 animate-breathing transition-all">
+          <Stars />
+        </div>
         <Image
           loading="eager"
-          src={Stars}
-          alt="stars"
-          className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all"
-          style={{ width: "100%" }}
-        />
-        <Image
-          loading="eager"
-          className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+          className="hidden sm:flex absolute left-0 right-0 top-0 z-5 drop-shadow-2xl "
           src={Clouds}
-          alt="cloudsandstars"
+          alt="clouds"
           style={{ width: "100%" }}
         />
         <Header />
-        <Image
-          src={CartoonClouds}
-          alt="cartoonclouds"
-          className="sm:flex hidden scale-150 z-0 animate-cloudmovement blur-sm absolute bottom-0 transformY transition-all"
-          style={{ width: "100%" }}
-        />
-        <Providers>{children}</Providers>
-        <div className="absolute bottom-0 w-full">
-          <Footer />
-        </div>
+        {children}
+        <Footer />
       </section>
     </body>
   </html>
