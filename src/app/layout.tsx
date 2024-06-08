@@ -13,8 +13,6 @@ import Stars from "@/assets/stars.svg";
 import Icon from "@/assets/icon.png";
 import { Nunito } from "next/font/google";
 import { Metadata } from "next";
-import { Providers } from "@/components/Providers";
-import CartoonClouds from "@/assets/cartoonclouds.svg";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -75,13 +73,13 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="flex fixed bottom-0 w-full flex-row justify-between bg-gradient-to-b from-transparent z-10 to-purple-400/40 p-4">
+  <div className="flex fixed bottom-0 w-full flex-row justify-between p-4">
     <div>
-      <span className="font-normal text-black">
+      <span className="font-normal">
         Copyright © Melodies Development 2023
       </span>
     </div>
-    <div className="dark:invert">
+    <div className="font-normal">
       <NavButton href="/contact" text="Contact Me" />
     </div>
   </div>
@@ -90,29 +88,28 @@ const Footer: FC = () => (
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
-      <section className="relative overflow-hidden flex min-h-screen flex-col bg-gradient-to-b from-[#02364A] via-[#39C4F9] to-white dark:bg-gradient-to-b dark:from-[#BBA5FF] dark:via-blue-400 dark:to-white">
+      <section className="relative overflow-hidden flex min-h-screen flex-col radial-gradient min-w-full">
         <Image
           loading="eager"
           src={Stars}
           alt="stars"
-          className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all"
-          style={{ width: "100%" }}
+          className="absolute top-2.5 left-1 -z-0 animate-breathing transition-all w-6 h-6 opacity-25"
         />
         <Image
           loading="eager"
-          className="absolute left-0 right-0 top-0 -z-0 opacity-50"
+          src={Stars}
+          alt="stars"
+          className="absolute top-28 left-14 -z-0 animate-breathing transition-all w-6 h-6 opacity-25"
+        />
+        <Image
+          loading="eager"
+          className="absolute left-0 right-0 top-0 -z-0 opacity-30"
           src={Clouds}
           alt="cloudsandstars"
           style={{ width: "100%" }}
         />
         <Header />
-        <Image
-          src={CartoonClouds}
-          alt="cartoonclouds"
-          className="sm:flex hidden scale-150 z-0 animate-cloudmovement blur-sm absolute bottom-0 transformY transition-all"
-          style={{ width: "100%" }}
-        />
-        <Providers>{children}</Providers>
+        {children}
         <div className="absolute bottom-0 w-full">
           <Footer />
         </div>
