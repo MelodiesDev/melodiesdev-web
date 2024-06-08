@@ -1,3 +1,5 @@
+"use client";
+
 import "./globals.css";
 import Image from "next/image";
 import Twitter from "~icons/fe/twitter";
@@ -7,17 +9,14 @@ import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
 import MelodiesDev from "@/assets/melodiesdev.svg";
-import Line from "@/assets/Line.svg";
 import Clouds from "@/assets/clouds.svg";
-import Stars from "@/assets/stars.svg";
 import Icon from "@/assets/icon.png";
 import { Nunito } from "next/font/google";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Melodies Dev",
-  description: "meow meow"
-};
+// export const metadata: Metadata = {
+//   title: "Melodies Dev",
+//   description: "meow meow"
+// };
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -26,54 +25,45 @@ type RootLayoutProps = {
 const nunito = Nunito({ subsets: ["latin"] });
 
 const Header: FC = () => (
-  <div className="container relative mx-auto flex px-16 pb-2 pt-2 z-10">
+  <div className="relative flex flex-col items-center mx-auto mt-40 z-10 gap-4">
     <Image
-      className="hidden sm:block absolute -bottom-6 left-0 right-0 dark:invert"
       loading="eager"
-      src={Line}
-      alt="line"
-      style={{ width: "100%" }}
+      className="sm:hidden block w-16 h-16"
+      src={Icon}
+      alt="MelodiesDev"
     />
-    <div className="flex w-full justify-between">
+    <div className="flex flex-row gap-3 text-white font-bold">
+      <NavButton href="/" text="Home" />
+      <NavButton href="/artwork" text="Artwork" />
+      <NavButton href="/blog" text="Blog" />
+    </div>
+    <div className="hidden sm:flex">
       <Image
         loading="eager"
-        className="sm:hidden block w-16 h-16 object-contain"
-        src={Icon}
+        className="h-16 w-32 hover:scale-105 transition-all"
+        src={MelodiesDev}
         alt="MelodiesDev"
       />
-      <div className="flex flex-1 items-center justify-end gap-3 text-white font-bold sm:justify-start">
-        <NavButton href="/" text="Home" />
-        <NavButton href="/artwork" text="Artwork" />
-        <NavButton href="/blog" text="Blog" />
-      </div>
-      <div className="hidden items-center justify-center sm:flex">
-        <Image
-          loading="eager"
-          className="h-16 aspect-auto hover:scale-105 transition-all"
-          src={MelodiesDev}
-          alt="MelodiesDev"
-        />
-      </div>
-      <div className="hidden flex-1 items-center justify-end gap-6 fill-white sm:flex">
-        <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
-          <Twitter />
-        </LinkButton>
-        <LinkButton href="https://github.com/melodiesdev" label="My Github!">
-          <Github />
-        </LinkButton>
-        <LinkButton
-          href="https://youtube.com/@MelodiesDevelopment"
-          label="My Youtube!"
-        >
-          <Youtube />
-        </LinkButton>
-      </div>
+    </div>
+    <div className="hidden gap-6 fill-white sm:flex">
+      <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
+        <Twitter />
+      </LinkButton>
+      <LinkButton href="https://github.com/melodiesdev" label="My Github!">
+        <Github />
+      </LinkButton>
+      <LinkButton
+        href="https://youtube.com/@MelodiesDevelopment"
+        label="My Youtube!"
+      >
+        <Youtube />
+      </LinkButton>
     </div>
   </div>
 );
 
 const Footer: FC = () => (
-  <div className="flex fixed bottom-0 w-full flex-row justify-between p-4">
+  <div className="flex relative bottom-0 w-full flex-row justify-between p-4 bg-gradient-to-b from-transparent to-black/30">
     <div>
       <span className="font-normal">
         Copyright © Melodies Development 2023
@@ -85,34 +75,62 @@ const Footer: FC = () => (
   </div>
 );
 
+const Stars: FC = () => {
+  // List of colors you want your stars to have
+  const colors = ["#ffffff", "#ffefd8", "#dcfffb", "#e0e8ff", "#cbcfea"];
+
+  const positions = Array.from({ length: 300 }, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    size: Math.random() * 0.4 + 0.7,
+    color: colors[Math.floor(Math.random() * colors.length)] // Selecting random color from your list
+  }));
+
+  const starSvg = (fillColor: string) => (
+    <svg
+      fill={fillColor}
+      viewBox="0 0 225 246"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M110 0L124.593 102.914L224.5 114.5L133.613 130.672L110 246L86.3874 130.672L0 114.5L95.4066 102.914L110 0Z"
+        fill={fillColor}
+      />
+    </svg>
+  );
+
+  return positions.map(({ x, y, size, color }, i) => (
+    <div
+      key={i}
+      className="absolute top-0 left-0"
+      style={{
+        transform: `translate(${x}px, ${y}px)`,
+        width: `${size}rem`,
+        height: `${size}rem`
+      }}
+    >
+      {starSvg(color)}
+    </div>
+  ));
+};
+
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
-      <section className="relative overflow-hidden flex min-h-screen flex-col radial-gradient min-w-full">
+      <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
+        <div className="absolute left-0 right-0 top-0 z-0 animate-breathing transition-all">
+          <Stars />
+        </div>
         <Image
           loading="eager"
-          src={Stars}
-          alt="stars"
-          className="absolute top-2.5 left-1 -z-0 animate-breathing transition-all w-6 h-6 opacity-25"
-        />
-        <Image
-          loading="eager"
-          src={Stars}
-          alt="stars"
-          className="absolute top-28 left-14 -z-0 animate-breathing transition-all w-6 h-6 opacity-25"
-        />
-        <Image
-          loading="eager"
-          className="absolute left-0 right-0 top-0 -z-0 opacity-30"
+          className="absolute left-0 right-0 top-0 z-5 drop-shadow-2xl "
           src={Clouds}
-          alt="cloudsandstars"
+          alt="clouds"
           style={{ width: "100%" }}
         />
         <Header />
         {children}
-        <div className="absolute bottom-0 w-full">
-          <Footer />
-        </div>
+        <Footer />
       </section>
     </body>
   </html>
