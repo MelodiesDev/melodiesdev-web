@@ -16,7 +16,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@codaworks/react-glow": "^1.0.3",
     "@fontsource/nunito": "^5.0.15",
     "@iconify/json": "^2.2.145",
     "@svgr/core": "^8.1.0",
