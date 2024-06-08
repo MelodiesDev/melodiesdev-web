@@ -8,6 +8,45 @@
     --background-end-rgb: 255, 255, 255;
 }
 
+.radial-gradient {
+    background-image: radial-gradient(
+            #321F67 0%,
+            #1F1342 50%,
+            #120B21 100%
+    );
+}
+
+.radial-gradient {
+    width: auto;
+    height: auto;
+}
+
+.radial-gradient2 {
+    background-image: radial-gradient(
+            #1F1342 0%,
+            #120B21 100%
+    );
+}
+
+.radial-gradient2 {
+    width: 550px;
+    height: 550px;
+}
+
+@keyframes breathe {
+    0%, 100% {
+        opacity: 0.1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.animate-breathing {
+    animation: breathe 4s ease-in-out infinite;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --foreground-rgb: 255, 255, 255;
