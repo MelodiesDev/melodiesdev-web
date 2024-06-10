@@ -9,7 +9,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main>
-      <div className="justify-center mx-4 md:mx-8 mt-8 border border-white rounded-lg p-4 bg-gradient-to-b from-black/30 to-black/15">
+      <div className="justify-center mx-4 md:mx-64 mt-8 border border-white rounded-lg p-4 bg-gradient-to-b from-black/30 to-black/15">
         <h1 className="text-2xl font-black text-white mb-4">
           Hey there! I'm Melody!
         </h1>
@@ -26,7 +26,7 @@ export default function Home() {
           </h1>
         </div>
       </div>
-      <div className="mx-4 md:mx-8 mb-24 items-center justify-center mt-8 border border-white rounded-lg p-4 bg-gradient-to-b from-black/30 to-black/15">
+      <div className="mx-4 md:mx-64 mb-24 items-center justify-center mt-8 border border-white rounded-lg p-4 bg-gradient-to-b from-black/30 to-black/15">
         <div className="flex flex-row justify-between z-10">
           <Image src={java} alt="java" className="w-12 h-12" loading="eager" />
           <Image
