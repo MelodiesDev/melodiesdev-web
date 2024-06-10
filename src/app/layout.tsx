@@ -7,7 +7,6 @@ import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
 import MelodiesDev from "@/assets/melodiesdev.svg";
-import Clouds from "@/assets/clouds.svg";
 import Icon from "@/assets/icon.png";
 import { Nunito } from "next/font/google";
 import { Metadata } from "next";
@@ -25,7 +24,7 @@ type RootLayoutProps = {
 const nunito = Nunito({ subsets: ["latin"] });
 
 const Header: FC = () => (
-  <div className="relative flex flex-col items-center mx-auto sm:mt-40 z-10 sm:gap-4">
+  <div className="relative flex flex-col items-center mx-auto z-10 sm:gap-4">
     <div className="flex flex-row gap-3 pt-8 text-white font-bold">
       <NavButton href="/" text="Home" />
       <NavButton href="/artwork" text="Artwork" />
@@ -79,16 +78,9 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={nunito.className}>
       <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
-        <div className="absolute left-0 right-0 top-0 z-0 animate-breathing transition-all">
+        <div className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all">
           <Stars />
         </div>
-        <Image
-          loading="eager"
-          className="hidden sm:flex absolute left-0 right-0 top-0 z-5 drop-shadow-2xl "
-          src={Clouds}
-          alt="clouds"
-          style={{ width: "100%" }}
-        />
         <Header />
         {children}
         <Footer />
