@@ -35,7 +35,7 @@ const Header: FC = () => (
     <div className="hidden sm:flex">
       <Image
         loading="eager"
-        className="h-16 w-32 hover:scale-105 transition-all"
+        className="h-24 w-48 hover:scale-105 transition-all"
         src={MelodiesDev}
         alt="MelodiesDev"
       />
@@ -64,7 +64,7 @@ const Footer: FC = () => (
   <div className="flex absolute bottom-0 w-full flex-row justify-between p-4 bg-gradient-to-b from-transparent to-black/30">
     <div>
       <span className="text-sm font-normal">
-        Copyright © Melodies Development 2023
+        Copyright © Melodies Development 2024
       </span>
     </div>
     <div className="text-sm font-normal">

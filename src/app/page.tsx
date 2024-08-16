@@ -11,11 +11,11 @@ import Arrow from "~icons/fe/arrow-right.jsx";
 export default function Home() {
   return (
     <main>
-      <div className="relative z-10 flex flex-col justify-center items-center">
-        <h1 className="pt-14 text-5xl font-medium text-white">
+      <div className="relative z-10 flex flex-col justify-center items-center text-3xl md:text-5xl md:px-0 px-8">
+        <h1 className="pt-8 md:pt-14 font-medium text-white">
           Hey there! I'm Melody!
         </h1>
-        <h1 className="pt-6 text-md font-normal text-white">
+        <h1 className="pt-10 text-xs md:text-md font-normal text-white">
           I've worked with these languages making fun stuff you'll love!
         </h1>
         <div className="flex flex-row gap-4 pt-6 z-10">
@@ -50,7 +50,7 @@ export default function Home() {
             loading="eager"
           />
         </div>
-        <div className="pt-4 text-lg font-normal text-white flex flex-row gap-8">
+        <div className="pt-10 text-lg font-normal text-white flex flex-row gap-8">
           <a
             className="flex flex-row gap-2 justify-center items-center transition-all hover:scale-105 duration-300"
             href="/about"
