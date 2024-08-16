@@ -1,10 +1,13 @@
+import spin from "@/assets/peridotspin.gif";
+import Image from "next/image";
+
 export default function About() {
   return (
-    <main className="container mx-auto justify-center">
-      <div className="mt-16 flex w-full justify-center">
-        <h1 className="text-6xl font-black text-white">That's about it.</h1>
+    <main>
+      <div className="mt-16 mx-96 flex flex-col justify-center items-center">
+        <Image src={spin} alt="spinnnnnnn" width={200} height={200} />
+        <text>soon™</text>
       </div>
-      <div className="pt-16"></div>
     </main>
   );
 }

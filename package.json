@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@fontsource/nunito": "^5.0.15",
-    "@iconify/json": "^2.2.145",
+    "@iconify/json": "^2.2.237",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@tanstack/eslint-plugin-query": "^5.35.6",
