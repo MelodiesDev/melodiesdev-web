@@ -15,7 +15,7 @@ export default function Home() {
         <h1 className="pt-8 md:pt-14 font-medium text-white">
           Hey there! I'm Melody!
         </h1>
-        <h1 className="pt-10 text-xs md:text-md font-normal text-white">
+        <h1 className="pt-10 text-xs md:text-lg font-normal text-white">
           I've worked with these languages making fun stuff you'll love!
         </h1>
         <div className="flex flex-row gap-4 pt-6 z-10">
