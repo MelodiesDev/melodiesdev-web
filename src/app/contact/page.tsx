@@ -18,29 +18,31 @@ export default function Contact() {
   return (
     <main className="container mx-auto mt-16">
       <div className="flex w-full justify-center">
-        <h1 className="text-6xl font-black text-white">
+        <h1 className="text-5xl font-bold text-white">
           Got a question? Contact me!
         </h1>
       </div>
-      <div className="mx-auto my-24 flex flex-col">
+      <div className="mx-auto flex flex-col">
         <div>
-          <div className="rounded-2xl bg-gradient-to-b from-[#864DFF]/80 to-[#339DE9]/80 p-4 outline-glow transition-all glow:bg-glow glow:outline glow:outline-white">
+          <div className="rounded-2xl p-4 transition-all">
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#EAE2FF]">Subject</h2>
+              <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF]">
+                Subject
+              </h2>
               <input
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 className="w-full text-black"
               />
             </div>
-            <h2 className="text-2xl font-semibold text-[#EAE2FF]">Body</h2>
+            <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF]">Body</h2>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               className="h-full w-full text-black"
             />
             <a className="flex flex-row justify-end mt-2" onClick={sendEmail}>
-              <button className="flex rounded-2xl bg-gradient-to-br from-[#79E7FF]/50 to-[#8FFF8D]/50 p-2">
+              <button className="flex p-2 bg-black/30 rounded-lg">
                 <h1>Send</h1>
               </button>
             </a>

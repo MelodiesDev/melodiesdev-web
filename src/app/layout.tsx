@@ -8,9 +8,10 @@ import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
 import MelodiesDev from "@/assets/melodiesdev.svg";
 import Icon from "@/assets/icon.png";
-import { Nunito } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import { Metadata } from "next";
 import { Stars } from "@/components/Stars";
+import Home from "~icons/fe/home.jsx";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -21,15 +22,10 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-const nunito = Nunito({ subsets: ["latin"] });
+const font = Quicksand({ subsets: ["latin"] });
 
 const Header: FC = () => (
-  <div className="relative flex flex-col items-center mx-auto z-10 sm:gap-4">
-    <div className="flex flex-row gap-3 pt-8 text-white font-bold">
-      <NavButton href="/" text="Home" />
-      <NavButton href="/artwork" text="Artwork" />
-      <NavButton href="/blog" text="Blog" />
-    </div>
+  <div className="pt-8 relative flex flex-col items-center mx-auto z-10 sm:gap-4">
     <Image
       loading="eager"
       className="sm:hidden block h-32 w-36"
@@ -58,6 +54,9 @@ const Header: FC = () => (
         <Youtube />
       </LinkButton>
     </div>
+    <a href="/">
+      <Home className="absolute top-8 right-8" />
+    </a>
   </div>
 );
 
@@ -76,7 +75,7 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
-    <body className={nunito.className}>
+    <body className={font.className}>
       <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
         <div className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all">
           <Stars />
