@@ -16,6 +16,10 @@
     );
 }
 
+.big-blur {
+    filter: blur(1px);
+}
+
 .radial-gradient {
     width: auto;
     height: auto;
@@ -31,20 +35,6 @@
 .radial-gradient2 {
     width: 550px;
     height: 550px;
-}
-
-@keyframes breathe {
-    0%, 100% {
-        opacity: 0.1;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
-}
-
-.animate-breathing {
-    animation: breathe 4s ease-in-out infinite;
 }
 
 @media (prefers-color-scheme: dark) {
