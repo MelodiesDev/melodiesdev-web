@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export function LinkButton({
   href,
@@ -6,7 +7,7 @@ export function LinkButton({
   children
 }: React.PropsWithChildren<{ href: string; label: string }>) {
   return (
-    <a
+    <Link
       className="group"
       target="_blank"
       href={href}
@@ -16,6 +17,6 @@ export function LinkButton({
       <div className="group-hover:-translate-y-1 group-hover:-rotate-12 transition-all">
         {children}
       </div>
-    </a>
+    </Link>
   );
 }
