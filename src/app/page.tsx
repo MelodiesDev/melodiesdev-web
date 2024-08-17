@@ -6,12 +6,13 @@ import kotlin from "@/assets/kotlin.svg";
 import javascript from "@/assets/javascript.svg";
 import Image from "next/image";
 import Arrow from "~icons/fe/arrow-right.jsx";
+import Link from "next/link";
 // import skink from "@/assets/skink.png";
 
 export default function Home() {
   return (
     <main>
-      <div className="relative z-10 flex flex-col justify-center items-center text-3xl md:text-5xl md:px-0 px-8">
+      <div className="flex flex-col justify-center items-center text-3xl md:text-5xl md:px-0 px-8">
         <h1 className="pt-8 md:pt-14 font-medium text-white">
           Hey there! I'm Melody!
         </h1>
@@ -50,13 +51,13 @@ export default function Home() {
             loading="eager"
           />
         </div>
-        <div className="pt-10 text-lg font-normal text-white flex flex-row gap-8">
-          <a
+        <div className="pt-10 text-lg font-normal text-white flex flex-row gap-8 z-10">
+          <Link
             className="flex flex-row gap-2 justify-center items-center transition-all hover:scale-105 duration-300"
-            href="/about"
+            href="/about/"
           >
             Learn More <Arrow />
-          </a>
+          </Link>
         </div>
         {/*<div className="z-10 pt-16 flex flex-row gap-8">*/}
         {/*  <Image*/}

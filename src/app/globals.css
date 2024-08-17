@@ -16,10 +16,6 @@
     );
 }
 
-.big-blur {
-    filter: blur(1px);
-}
-
 .radial-gradient {
     width: auto;
     height: auto;

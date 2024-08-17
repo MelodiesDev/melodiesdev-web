@@ -10,8 +10,9 @@ import MelodiesDev from "@/assets/melodiesdev.svg";
 import Icon from "@/assets/icon.png";
 import { Quicksand } from "next/font/google";
 import { Metadata } from "next";
-import { Stars } from "@/components/Stars";
 import Home from "~icons/fe/home.jsx";
+import Link from "next/link";
+import { THREEDComponents } from "@/components/3DComponents";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -33,12 +34,14 @@ const Header: FC = () => (
       alt="MelodiesDev"
     />
     <div className="hidden sm:flex">
-      <Image
-        loading="eager"
-        className="h-24 w-48 hover:scale-105 transition-all"
-        src={MelodiesDev}
-        alt="MelodiesDev"
-      />
+      <Link href="/">
+        <Image
+          loading="eager"
+          className="h-24 w-48 hover:scale-105 transition-all"
+          src={MelodiesDev}
+          alt="MelodiesDev"
+        />
+      </Link>
     </div>
     <div className="gap-6 fill-white flex flex-row">
       <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
@@ -54,9 +57,9 @@ const Header: FC = () => (
         <Youtube />
       </LinkButton>
     </div>
-    <a href="/">
-      <Home className="absolute top-8 right-8" />
-    </a>
+    <Link href="/" className="absolute top-8 right-8">
+      <Home />
+    </Link>
   </div>
 );
 
@@ -77,8 +80,8 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={font.className}>
       <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
-        <div className="absolute left-0 right-0 top-0 -z-0">
-          <Stars />
+        <div className="absolute inset-0 pointer-events-none">
+          <THREEDComponents />
         </div>
         <Header />
         {children}
