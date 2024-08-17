@@ -1,4 +1,4 @@
-import spin from "@/assets/peridotspin.gif";
+import spin from "@/assets/dance-moves.gif";
 import Image from "next/image";
 
 export default function About() {
