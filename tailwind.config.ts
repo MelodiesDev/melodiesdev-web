@@ -10,10 +10,11 @@ const config: Config = {
     extend: {
       keyframes: {
         breathing: {
-          "0%": { opacity: "15%", transform: "scaleX(102%)" },
-          "50%": { opacity: "100%", transform: "scaleX(100%)" },
-          "65%": { opacity: "50%", transform: "scaleX(100%)" },
-          "100%": { opacity: "15%", transform: "scaleX(102%)" }
+          "0%": { opacity: "0%", transform: "scaleX(102%)" },
+          "25%": { opacity: "30%", transform: "scaleX(100%)" },
+          "50%": { opacity: "50%", transform: "scaleX(100%)" },
+          "75%": { opacity: "30%", transform: "scaleX(100%)" },
+          "100%": { opacity: "0%", transform: "scaleX(102%)" }
         },
         cloudmovement: {
           "0%": { transform: "translateX(100%)" },

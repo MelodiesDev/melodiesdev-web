@@ -77,7 +77,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
     <body className={font.className}>
       <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
-        <div className="absolute left-0 right-0 top-0 -z-0 animate-breathing transition-all">
+        <div className="absolute left-0 right-0 top-0 -z-0">
           <Stars />
         </div>
         <Header />
