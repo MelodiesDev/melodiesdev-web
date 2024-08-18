@@ -12,13 +12,13 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main>
-      <div className="flex flex-col justify-center items-center text-3xl md:text-5xl md:px-0 px-8">
-        <h1 className="pt-8 md:pt-14 font-medium text-white">
+      <div className="flex flex-col justify-center items-center text-3xl md:text-5xl md:px-0 px-8 z-40">
+        <text className="pt-8 pb-2 md:pt-14 font-medium animated-gradient-mask">
           Hey there! I'm Melody!
-        </h1>
-        <h1 className="pt-10 text-xs md:text-lg font-normal text-white">
+        </text>
+        <text className="pt-8 text-xs md:text-lg font-normal animated-gradient-mask">
           I've worked with these languages making fun stuff you'll love!
-        </h1>
+        </text>
         <div className="flex flex-row gap-4 pt-6 z-10">
           <Image
             src={java}
@@ -51,14 +51,14 @@ export default function Home() {
             loading="eager"
           />
         </div>
-        <div className="pt-10 text-lg font-normal text-white flex flex-row gap-8 z-10">
-          <Link
-            className="flex flex-row gap-2 justify-center items-center transition-all hover:scale-105 duration-300"
-            href="/about/"
-          >
-            Learn More <Arrow />
-          </Link>
-        </div>
+        <Link
+          className="pt-10 text-lg font-normal text-white flex flex-row gap-8 z-10"
+          href="/about/"
+        >
+          <p className="flex flex-row gap-2 justify-center items-center transition-all hover:scale-105 duration-300">
+            Learn More <Arrow className="text-white" />
+          </p>
+        </Link>
         {/*<div className="z-10 pt-16 flex flex-row gap-8">*/}
         {/*  <Image*/}
         {/*    src={skink}*/}

@@ -18,7 +18,7 @@ export default function Contact() {
   return (
     <main className="container mx-auto mt-16">
       <div className="flex w-full justify-center">
-        <h1 className="text-5xl font-bold text-white">
+        <h1 className="text-5xl font-bold text-white animated-gradient-mask">
           Got a question? Contact me!
         </h1>
       </div>
@@ -26,7 +26,7 @@ export default function Contact() {
         <div>
           <div className="rounded-2xl p-4 transition-all">
             <div className="mb-8">
-              <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF]">
+              <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF] animated-gradient-mask">
                 Subject
               </h2>
               <input
@@ -35,14 +35,16 @@ export default function Contact() {
                 className="w-full text-black"
               />
             </div>
-            <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF]">Body</h2>
+            <h2 className="pb-4 text-2xl font-semibold text-[#EAE2FF] animated-gradient-mask">
+              Body
+            </h2>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               className="h-full w-full text-black"
             />
             <a className="flex flex-row justify-end mt-2" onClick={sendEmail}>
-              <button className="flex p-2 bg-black/30 rounded-lg">
+              <button className="flex p-2 bg-black/30 rounded-lg animated-gradient-mask">
                 <h1>Send</h1>
               </button>
             </a>
