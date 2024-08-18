@@ -1,4 +1,4 @@
-import peridot from "@/assets/peridotspin.gif";
+import peridot from "@/assets/dance-moves.gif";
 import Image from "next/image";
 
 export default function Projects() {
@@ -9,7 +9,7 @@ export default function Projects() {
           Here's what I've worked on!
         </h1>
       </div>
-      <Image className="mx-auto pt-8" src={peridot} alt="peridotspin" />
+      <Image className="mx-auto pt-8" src={peridot} alt="peridot dance" />
     </main>
   );
 }
