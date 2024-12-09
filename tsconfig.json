@@ -28,7 +28,6 @@
       ]
     },
     "types": [
-      "unplugin-icons/types/react"
     ]
   },
   "include": [
