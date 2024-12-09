@@ -10,7 +10,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { THREEDComponents } from "@/components/3DComponents";
 import { cn } from "@/lib/utils";
-import { Home } from "lucide-react";
+import { Brush } from "lucide-react";
 import { SiGithub, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ const Header: FC = () => (
       </Link>
     </div>
     <div className="gap-6 fill-white flex flex-row">
-      <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
+      <LinkButton href="https://x.com/melodiesdev" label="My Twitter!">
         <SiX />
       </LinkButton>
       <LinkButton href="https://github.com/melodiesdev" label="My Github!">
@@ -56,18 +56,22 @@ const Header: FC = () => (
         <SiYoutube />
       </LinkButton>
     </div>
-    <Link href="/" className="absolute top-8 right-8">
-      <Home />
+    <Link
+      href="/artwork"
+      className="absolute top-8 right-8 hover:-translate-y-1 hover:-rotate-12 transition-all"
+    >
+      <Brush />
     </Link>
   </div>
 );
 
 const Footer: FC = () => (
   <div className="flex absolute bottom-0 w-full flex-row justify-between p-4 bg-gradient-to-b from-transparent to-black/30">
-    <div>
-      <span className="text-sm font-normal">
-        Copyright © Melodies Development 2024
-      </span>
+    <div className="flex flex-row gap-1 ">
+      <span>made with ❤️ by</span>
+      <LinkButton href="https://x.com/melodiesdev" label="My Twitter!">
+        <span>melody</span>
+      </LinkButton>
     </div>
     <div className="text-sm font-normal">
       <NavButton href="/contact" text="Contact Me" />
