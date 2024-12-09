@@ -1,8 +1,5 @@
 import "./globals.css";
 import Image from "next/image";
-import Twitter from "~icons/fe/twitter";
-import Github from "~icons/fe/github-alt";
-import Youtube from "~icons/fe/youtube";
 import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import React, { FC } from "react";
@@ -10,9 +7,11 @@ import MelodiesDev from "@/assets/melodiesdev.svg";
 import Icon from "@/assets/icon.png";
 import { Quicksand } from "next/font/google";
 import { Metadata } from "next";
-import Home from "~icons/fe/home.jsx";
 import Link from "next/link";
 import { THREEDComponents } from "@/components/3DComponents";
+import { cn } from "@/lib/utils";
+import { Home } from "lucide-react";
+import { SiGithub, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 
 export const metadata: Metadata = {
   title: "Melodies Dev",
@@ -45,16 +44,16 @@ const Header: FC = () => (
     </div>
     <div className="gap-6 fill-white flex flex-row">
       <LinkButton href="https://twitter.com/melodiesdev" label="My Twitter!">
-        <Twitter />
+        <SiX />
       </LinkButton>
       <LinkButton href="https://github.com/melodiesdev" label="My Github!">
-        <Github />
+        <SiGithub />
       </LinkButton>
       <LinkButton
         href="https://youtube.com/@MelodiesDevelopment"
         label="My Youtube!"
       >
-        <Youtube />
+        <SiYoutube />
       </LinkButton>
     </div>
     <Link href="/" className="absolute top-8 right-8">
@@ -78,7 +77,7 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en">
-    <body className={font.className}>
+    <body className={cn("dark", font.className)}>
       <section className="relative overflow-hidden min-h-screen radial-gradient min-w-full">
         <div className="absolute inset-0 pointer-events-none">
           <THREEDComponents />
