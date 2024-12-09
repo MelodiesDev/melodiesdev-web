@@ -43,10 +43,75 @@
 
 body {
     font-family: "Nunito", sans-serif;
-    color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-            to bottom,
-            transparent,
-            rgb(var(--background-end-rgb))
-    ) rgb(var(--background-start-rgb));
+}
+
+@layer base {
+    :root {
+        /* Light theme - day sky inspired */
+        --background: 260 40% 97%;
+        --foreground: 260 30% 20%;
+        --card: 260 40% 97%;
+        --card-foreground: 260 30% 20%;
+        --popover: 260 40% 97%;
+        --popover-foreground: 260 30% 20%;
+        --primary: 260 60% 50%;
+        --primary-foreground: 260 40% 97%;
+        --secondary: 180 50% 60%;
+        --secondary-foreground: 260 30% 20%;
+        --muted: 260 20% 90%;
+        --muted-foreground: 260 20% 40%;
+        --accent: 180 70% 50%;
+        --accent-foreground: 260 30% 20%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 260 30% 85%;
+        --input: 260 30% 85%;
+        --ring: 260 60% 50%;
+        /* Chart colors matching the tech stack icons */
+        --chart-1: 20 80% 50%;    /* Java orange */
+        --chart-2: 300 60% 50%;   /* Xamarin purple */
+        --chart-3: 200 85% 45%;   /* TypeScript blue */
+        --chart-4: 45 90% 50%;    /* JavaScript yellow */
+        --chart-5: 195 85% 50%;   /* React blue */
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        /* Dark theme - starry night inspired */
+        --background: 260 40% 8%;
+        --foreground: 260 20% 98%;
+        --card: 260 40% 10%;
+        --card-foreground: 260 20% 98%;
+        --popover: 260 40% 10%;
+        --popover-foreground: 260 20% 98%;
+        --primary: 260 70% 65%;
+        --primary-foreground: 260 20% 98%;
+        --secondary: 180 60% 60%;
+        --secondary-foreground: 260 20% 98%;
+        --muted: 260 30% 20%;
+        --muted-foreground: 260 20% 70%;
+        --accent: 180 70% 60%;
+        --accent-foreground: 260 20% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 260 30% 20%;
+        --input: 260 30% 20%;
+        --ring: 260 70% 65%;
+        /* Chart colors for dark mode - brighter variants */
+        --chart-1: 20 85% 60%;    /* Java orange */
+        --chart-2: 300 70% 60%;   /* Xamarin purple */
+        --chart-3: 200 90% 55%;   /* TypeScript blue */
+        --chart-4: 45 95% 60%;    /* JavaScript yellow */
+        --chart-5: 195 90% 60%;   /* React blue */
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
 }
