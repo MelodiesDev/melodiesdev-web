@@ -10,12 +10,12 @@ export default function Blog() {
           Here's all my commissioned artwork!
         </h1>
       </div>
-      <div className="flex flex-col justify-center gap-8 z-10 my-16">
+      <div className="grid grid-cols-2 justify-center gap-16 m-8 pb-8 z-10 ">
         <a href="https://x.com/Ztermidsy_">
-          <Image className="mx-auto px-32" src={refsheet} alt="refsheet" />
+          <Image src={refsheet} alt="refsheet" />
         </a>
         <a href="https://x.com/Ztermidsy_">
-          <Image className="mx-auto px-32" src={pose} alt="pose" />
+          <Image src={pose} alt="pose" />
         </a>
       </div>
     </main>
