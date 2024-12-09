@@ -9,7 +9,7 @@ export const THREEDComponents: FC = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={ref} className="h-full w-full">
+    <div ref={ref} className="absolute m-0 p-0 h-full w-full">
       <Canvas eventSource={ref.current ?? undefined}>
         <Clouds material={MeshBasicMaterial} renderOrder={2}>
           <Cloud
