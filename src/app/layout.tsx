@@ -83,7 +83,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
           <THREEDComponents />
         </div>
         <Header />
-        {children}
+        <div className="z-50 relative inset-0 w-full h-full">{children}</div>
         <Footer />
       </section>
     </body>

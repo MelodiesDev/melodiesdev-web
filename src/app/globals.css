@@ -21,6 +21,29 @@
     height: auto;
 }
 
+@keyframes gradient-animation {
+    0% {
+        background-position: 0 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.animated-gradient-mask {
+    position: relative;
+    display: inline-block;
+    /*background: linear-gradient(90deg, #0000ff, #ff00ff, #800080);*/
+    background: url("/background.jpg");
+    background-size: 500%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 30s linear infinite;
+}
+
+
 .radial-gradient2 {
     background-image: radial-gradient(
             #1F1342 0%,
