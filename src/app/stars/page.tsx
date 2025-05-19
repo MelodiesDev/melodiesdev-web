@@ -1,5 +1,7 @@
 "use client";
 
+
+
 export default function StarsPage() {
   return (
     <div className="relative w-full h-screen flex flex-col items-center justify-center">

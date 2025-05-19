@@ -1,20 +1,17 @@
 "use client";
 
-import React, { FC, useRef, useEffect, useMemo } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
-  Color,
-  BufferGeometry,
-  BufferAttribute,
   AdditiveBlending,
-  BackSide,
-  Points,
-  ShaderMaterial,
+  BufferAttribute,
+  BufferGeometry,
+  Color,
   Group,
-  Mesh,
-  SphereGeometry,
-  MeshBasicMaterial,
+  PerspectiveCamera as ThreePerspectiveCamera,
+  Vector3
 } from "three";
+import { CameraControls } from "@react-three/drei";
 import brightStars from "../../data/bright_stars.json";
 
 // Define star interface based on bright_stars.json structure
@@ -40,6 +37,7 @@ interface Star {
 const CELESTIAL_SPHERE_RADIUS = 50; // Radius for projecting stars
 const MIN_VISUAL_MAGNITUDE = 6.5; // Faintest stars to render
 
+
 // Helper to convert RA/Dec to Cartesian coordinates
 const raDecToCartesian = (
   raHours: number,
@@ -59,17 +57,76 @@ const raDecToCartesian = (
   return [-x, y, -z]; // Negate x and z for typical camera facing -Z
 };
 
+
+const tilt = 23.5; // Earths tilt
+const radius = 6371;
+const origin = new Vector3(0, 0, 0);
+
+function latLonToPointOnSphere(
+  latitude: number,
+  longitude: number,
+  tilt: number,
+  radius: number,
+  origin: { x: number, y: number, z: number }
+): { x: number, y: number, z: number } {
+  // Convert degrees to radians
+  const latRad = (latitude + tilt) * (Math.PI / 180);
+  const lonRad = longitude * (Math.PI / 180);
+
+  // Calculate the Cartesian coordinates
+  const x = origin.x + radius * Math.cos(latRad) * Math.cos(lonRad);
+  const y = origin.y + radius * Math.sin(latRad) * Math.sin(lonRad);
+  const z = origin.z + radius * Math.cos(latRad);
+
+  return { x, y, z };
+}
+
+
 // Main 3D component
 export const THREEDComponents: FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [location, setLocation] = useState<GeolocationPosition | undefined>();
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      setLocation(position);
+    });
+  }, []);
+
+  const camera = useMemo(() => {
+    const cam = new ThreePerspectiveCamera(70, 1920 / 1080, 1, CELESTIAL_SPHERE_RADIUS * 2);
+    cam.updateProjectionMatrix();
+    return cam;
+  }, []);
+
+  useEffect(() => {
+    // Get latitude and longitude
+    const latitude = location?.coords.latitude;
+    const longitude = location?.coords.longitude;
+    if (!latitude || !longitude) return;
+
+    // Calculate the point on the sphere
+    const point = latLonToPointOnSphere(latitude, longitude, tilt, radius, origin);
+
+    // Set the camera position to the point
+    camera.lookAt(new Vector3(point.x, point.y, point.z));
+    console.log("point", point, "location", location);
+  }, [location, camera]);
 
   return (
     <div ref={containerRef} className="absolute m-0 p-0 h-full w-full">
       <Canvas
         eventSource={containerRef.current ?? undefined} // Ensure events are sourced from this div
-        camera={{ position: [0, 0, 0.1], fov: 70, near: 0.01, far: CELESTIAL_SPHERE_RADIUS * 2 }}
+        camera={camera}
       >
+        {/* Earth sphere */}
+        <mesh>
+          <sphereGeometry args={[radius]} />
+          <meshBasicMaterial color="blue" wireframe={true} />
+        </mesh>
+
         <NightSkyRenderer stars={brightStars as Star[]} />
+        <CameraControls camera={camera} makeDefault />
       </Canvas>
     </div>
   );
@@ -118,7 +175,7 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
       // A magnitude difference of 5 is a factor of 100 in brightness
       // Max size for very bright stars (e.g., mag -1.5 like Sirius), min for dim ones
       const visualSize = Math.max(
-        0.4, // Minimum visual size
+        1, // Minimum visual size
         Math.pow(1.912, -star.mag)// Adjust divisor for overall scaling
       );
       pointSizes.push(visualSize);
@@ -132,15 +189,15 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
   }, [visibleStars]);
 
   // Slow rotation for celestial sphere effect
-  useFrame(({ clock }) => {
-    if (starFieldRef.current) {
-      // Simulate Earth's rotation (very slow)
-      // One full rotation (2*PI) per day (24 * 60 * 60 seconds)
-      // This will be too slow to notice immediately, so we speed it up for demo
-      const rotationSpeed = 0.025; // Radians per second (adjust for desired speed)
-      starFieldRef.current.rotation.y = clock.getElapsedTime() * rotationSpeed;
-    }
-  });
+  // useFrame(({ clock }) => {
+  //   if (starFieldRef.current) {
+  //     // Simulate Earth's rotation (very slow)
+  //     // One full rotation (2*PI) per day (24 * 60 * 60 seconds)
+  //     // This will be too slow to notice immediately, so we speed it up for demo
+  //     const rotationSpeed = 0.025; // Radians per second (adjust for desired speed)
+  //     starFieldRef.current.rotation.y = clock.getElapsedTime() * rotationSpeed;
+  //   }
+  // });
 
   // Vertex Shader for star points
   const vertexShader = `
