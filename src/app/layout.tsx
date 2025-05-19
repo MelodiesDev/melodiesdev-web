@@ -120,7 +120,7 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en" className={nunito.variable}>
-    <body className={cn("dradial-gradient ark font-sans", nunito.className)}>
+    <body className={cn("radial-gradient ark font-sans", nunito.className)}>
       <section className="radial-gradient relative min-h-screen min-w-full overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
           <THREEDComponents />

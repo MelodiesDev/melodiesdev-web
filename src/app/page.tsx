@@ -92,6 +92,12 @@ export default function Home() {
             >
               Learn More <ArrowRight size={18} />
             </Link>
+            <Link
+              className="flex flex-row items-center justify-center gap-2 px-4 py-2 font-medium text-purple-300 transition-all duration-300 hover:scale-105 hover:underline"
+              href="/stars/"
+            >
+              3D Sky <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
 
