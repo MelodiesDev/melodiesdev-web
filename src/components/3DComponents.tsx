@@ -13,7 +13,7 @@ import {
   PerspectiveCamera as ThreePerspectiveCamera,
   Vector3
 } from "three";
-import { CameraControls, Text } from "@react-three/drei";
+import { CameraControls, Text, Billboard } from "@react-three/drei";
 
 // Define star interface based on bright_stars.json structure
 interface Star {
@@ -116,7 +116,7 @@ function latLonToPointOnSphere(
 }
 
 // Component to render constellation lines
-const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: ConstellationData[]; latitude: number }> = ({ stars, constellationLinesData, latitude }) => {
+const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: ConstellationData[] }> = ({ stars, constellationLinesData }) => {
   const starHipMap = useMemo(() => {
     const map = new Map<number, Vector3>();
     stars.forEach(star => {
@@ -176,9 +176,8 @@ const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: Co
     const geometry = new BufferGeometry().setFromPoints(lines);
     const material = new LineBasicMaterial({ color: 0x446688, linewidth: 0.5, transparent: true, opacity: 0.5 });
 
-    const textRotationZ = latitude < 0 ? Math.PI : 0;
-    return { geometry, material, names: constellationNames.map(cn => ({...cn, rotationZ: textRotationZ })) };
-  }, [starHipMap, constellationLinesData, latitude]);
+    return { geometry, material, names: constellationNames };
+  }, [starHipMap, constellationLinesData]);
 
   if (!constellationLineSegments) return null;
 
@@ -186,25 +185,24 @@ const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: Co
     <group>
       <lineSegments geometry={constellationLineSegments.geometry} material={constellationLineSegments.material} />
       {constellationLineSegments.names.map((item, index) => (
-        <Text
-            key={index}
-            position={item.position}
+        <Billboard key={index} position={item.position} follow={true}>
+          <Text
             fontSize={CELESTIAL_SPHERE_RADIUS / 100}
             color="lightblue"
             anchorX="center"
             anchorY="middle"
             maxWidth={200}
-            rotation={[0, 0, item.rotationZ]}
             >
             {item.name}
-        </Text>
+          </Text>
+        </Billboard>
       ))}
     </group>
   );
 };
 
 // Component to render the star points
-const NightSkyRenderer: FC<{ stars: Star[]; latitude: number }> = ({ stars, latitude }) => {
+const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
   const starFieldRef = useRef<Group>(null);
   const BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD = 2.0; // Stars brighter than this will be labeled
 
@@ -251,12 +249,12 @@ const NightSkyRenderer: FC<{ stars: Star[]; latitude: number }> = ({ stars, lati
   }, [visibleStars]);
 
   const brightStarLabels = useMemo(() => {
-    const labels: { id: string; position: Vector3; rotationZ: number }[] = [];
+    const labels: { id: string; position: Vector3; }[] = [];
     const labeledIds = new Set<string>();
     const sortedBrightStars = visibleStars
       .filter(star => star.mag < BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD && star.id)
       .sort((a, b) => a.mag - b.mag);
-    const textRotationZ = latitude < 0 ? Math.PI : 0;
+    
     sortedBrightStars.forEach(star => {
       if (!star.id || labeledIds.has(star.id)) return;
       let x: number, y: number, z: number;
@@ -269,11 +267,11 @@ const NightSkyRenderer: FC<{ stars: Star[]; latitude: number }> = ({ stars, lati
         z = (star.z / dirLength) * CELESTIAL_SPHERE_RADIUS;
       }
       // Slightly offset the label position from the star point
-      labels.push({ id: star.id, position: new Vector3(x, y, z).multiplyScalar(1.02), rotationZ: textRotationZ });
+      labels.push({ id: star.id, position: new Vector3(x, y, z).multiplyScalar(1.02) });
       labeledIds.add(star.id);
     });
     return labels;
-  }, [visibleStars, latitude]);
+  }, [visibleStars]);
 
   const vertexShader = `
     attribute float pointSizeAttribute;
@@ -328,18 +326,17 @@ const NightSkyRenderer: FC<{ stars: Star[]; latitude: number }> = ({ stars, lati
         />
       </points>
       {brightStarLabels.map((label, index) => (
-        <Text
-          key={`${label.id}-${index}`}
-          position={label.position}
-          fontSize={CELESTIAL_SPHERE_RADIUS / 150} // Adjust size as needed
-          color="#FFFFCC"
-          anchorX="left"
-          anchorY="middle"
-          material-depthWrite={false} // Ensure text renders correctly with transparent points
-          rotation={[0, 0, label.rotationZ]}
-        >
-          {label.id}
-        </Text>
+        <Billboard key={`${label.id}-${index}`} position={label.position} follow={true}>
+          <Text
+            fontSize={CELESTIAL_SPHERE_RADIUS / 150} // Adjust size as needed
+            color="#FFFFCC"
+            anchorX="left"
+            anchorY="middle"
+            material-depthWrite={false} // Ensure text renders correctly with transparent points
+          >
+            {label.id}
+          </Text>
+        </Billboard>
       ))}
     </group>
   );
@@ -351,7 +348,6 @@ export const THREEDComponents: FC = () => {
   const [location, setLocation] = useState<GeolocationPosition | undefined>();
   const [constellationCultureData, setConstellationCultureData] = useState<SkyCultureData | null>(null);
   const [allStarsData, setAllStarsData] = useState<Star[] | null>(null); // Added state for allStarsData
-  const [skyRotationY, setSkyRotationY] = useState<number>(0);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -433,13 +429,12 @@ export const THREEDComponents: FC = () => {
             <meshBasicMaterial color="#000044" wireframe={false} opacity={0.7} transparent />
           </mesh>
 
-          <group rotation={[0, skyRotationY , 0]}> {/* Added group for sky rotation */}
-            <NightSkyRenderer stars={allStars} latitude={location?.coords.latitude || 0} />
+          <group> {/* Group for all sky elements, no longer rotating here */}
+            <NightSkyRenderer stars={allStars} />
             {constellationCultureData?.constellations && (
               <ConstellationLinesRenderer
                 stars={allStars}
                 constellationLinesData={constellationCultureData.constellations}
-                latitude={location?.coords.latitude || 0}
               />
             )}
           </group>
