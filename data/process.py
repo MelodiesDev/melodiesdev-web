@@ -188,6 +188,7 @@ def process_stars(input_file, output_file):
                     'spect': row.get('spect', ''),
                     'ci': row.get('ci', ''),
                     # Additional fields
+                    'hip': int(row['hip']) if row.get('hip') and row['hip'].isdigit() else None, # Hipparcos ID
                     'size': star_size,                    # Estimated size in solar radii
                     'dist': float(row.get('dist', 0)),    # Distance in parsecs
                     'ra': float(row.get('ra', 0)),        # Right ascension

@@ -8,15 +8,16 @@ import {
   BufferGeometry,
   Color,
   Group,
+  LineBasicMaterial,
+  LineSegments,
   PerspectiveCamera as ThreePerspectiveCamera,
   Vector3
 } from "three";
-import { CameraControls } from "@react-three/drei";
-import brightStars from "../../data/bright_stars.json";
+import { CameraControls, Text } from "@react-three/drei";
 
 // Define star interface based on bright_stars.json structure
 interface Star {
-  id: string;
+  id: string; // Name of the star (e.g., "Sol", "Sirius")
   mag: number; // Magnitude (visual brightness, lower is brighter)
   x: number; // Cartesian x (often for nearby stars or as fallback)
   y: number; // Cartesian y
@@ -26,6 +27,8 @@ interface Star {
   temperature: number; // Kelvin
   spect: string; // Spectral type
   ci: string; // Color Index
+  hip?: number; // Hipparcos ID
+  con?: string; // Constellation abbreviation
   size?: number; // Physical size (solar radii or similar)
   dist?: number; // Distance (often in light-years or parsecs)
   ra?: number; // Right Ascension (hours, 0-24)
@@ -33,9 +36,42 @@ interface Star {
   lum?: number; // Luminosity (relative to Sol)
 }
 
+interface ConstellationData {
+  id: string;
+  lines: number[][]; // Array of arrays, each inner array is a sequence of HIP IDs forming a polyline
+  common_name?: {
+    english?: string;
+    native?: string;
+    [key: string]: string | undefined; // Allow other languages
+  };
+  image?: { // Added image field and its properties
+    file: string;
+    size?: [number, number];
+    anchors?: Array<{ pos: [number, number]; hip: number }>;
+  };
+}
+
+interface SkyCultureData {
+  id: string;
+  constellations?: ConstellationData[];
+  asterisms?: AsterismData[]; // If you want to add asterisms later
+  // other sky culture properties
+}
+
+// Simplified Asterism data if you want to use it later
+interface AsterismData {
+  id: string;
+  lines: number[][];
+  common_name?: {
+    english?: string;
+    native?: string;
+  };
+}
+
+
 // Constants
-const CELESTIAL_SPHERE_RADIUS = 50; // Radius for projecting stars
-const MIN_VISUAL_MAGNITUDE = 6.5; // Faintest stars to render
+const CELESTIAL_SPHERE_RADIUS = 100; // Increased radius for better constellation visibility
+const MIN_VISUAL_MAGNITUDE = 6.5; // Faintest stars to render for points
 
 
 // Helper to convert RA/Dec to Cartesian coordinates
@@ -46,104 +82,138 @@ const raDecToCartesian = (
 ): [number, number, number] => {
   const raRad = (raHours / 24) * 2 * Math.PI; // Convert RA from hours to radians
   const decRad = (decDegrees * Math.PI) / 180; // Convert Dec from degrees to radians
-
-  // Standard spherical to Cartesian conversion
-  // In Three.js, Y is typically up.
-  // RA=0, Dec=0 points towards positive X if Y is up.
-  // We might adjust this to align with common astronomical visualizations (e.g. Z towards North Celestial Pole)
   const x = radius * Math.cos(decRad) * Math.cos(raRad);
   const y = radius * Math.sin(decRad);
   const z = radius * Math.cos(decRad) * Math.sin(raRad);
-  return [-x, y, -z]; // Negate x and z for typical camera facing -Z
+  return [x, y, -z]; // Corrected: Removed negation from x for proper RA orientation
 };
 
 
 const tilt = 23.5; // Earths tilt
-const radius = 6371;
+const earthRadius = 10; // Visual radius for Earth sphere, not actual
 const origin = new Vector3(0, 0, 0);
 
 function latLonToPointOnSphere(
   latitude: number,
   longitude: number,
-  tilt: number,
-  radius: number,
-  origin: { x: number, y: number, z: number }
-): { x: number, y: number, z: number } {
+  _tilt: number, // tilt is not directly used here for camera lookAt, but good to have for other calcs
+  _radius: number, // sphere radius not used for direction
+  _origin: Vector3
+): Vector3 {
   // Convert degrees to radians
-  const latRad = (latitude + tilt) * (Math.PI / 180);
+  const latRad = latitude * (Math.PI / 180);
   const lonRad = longitude * (Math.PI / 180);
 
-  // Calculate the Cartesian coordinates
-  const x = origin.x + radius * Math.cos(latRad) * Math.cos(lonRad);
-  const y = origin.y + radius * Math.sin(latRad) * Math.sin(lonRad);
-  const z = origin.z + radius * Math.cos(latRad);
+  // Calculate direction vector from Earth's center to the location on surface
+  // This determines the "up" direction for the observer
+  const x = Math.cos(latRad) * Math.cos(lonRad);
+  const y = Math.sin(latRad);
+  const z = Math.cos(latRad) * Math.sin(lonRad);
 
-  return { x, y, z };
+  // The point to look at is in the direction of the zenith for the observer.
+  // We want to point the camera from origin towards this zenith point on the celestial sphere.
+  return new Vector3(x, y, z).multiplyScalar(CELESTIAL_SPHERE_RADIUS);
 }
 
-
-// Main 3D component
-export const THREEDComponents: FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [location, setLocation] = useState<GeolocationPosition | undefined>();
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      setLocation(position);
+// Component to render constellation lines
+const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: ConstellationData[]; latitude: number }> = ({ stars, constellationLinesData, latitude }) => {
+  const starHipMap = useMemo(() => {
+    const map = new Map<number, Vector3>();
+    stars.forEach(star => {
+      if (star.hip && star.ra !== undefined && star.dec !== undefined) {
+        const [x, y, z] = raDecToCartesian(star.ra, star.dec, CELESTIAL_SPHERE_RADIUS);
+        map.set(star.hip, new Vector3(x, y, z));
+      } else if (star.hip) {
+        const dirLength = Math.sqrt(star.x ** 2 + star.y ** 2 + star.z ** 2) || 1;
+        const sx = (star.x / dirLength) * CELESTIAL_SPHERE_RADIUS;
+        const sy = (star.y / dirLength) * CELESTIAL_SPHERE_RADIUS;
+        const sz = (star.z / dirLength) * CELESTIAL_SPHERE_RADIUS;
+        map.set(star.hip, new Vector3(sx,sy,sz));
+      }
     });
-  }, []);
+    return map;
+  }, [stars]);
 
-  const camera = useMemo(() => {
-    const cam = new ThreePerspectiveCamera(70, 1920 / 1080, 1, CELESTIAL_SPHERE_RADIUS * 2);
-    cam.updateProjectionMatrix();
-    return cam;
-  }, []);
+  const constellationLineSegments = useMemo(() => {
+    const lines: Vector3[] = [];
+    const constellationNames: { name: string, position: Vector3 }[] = [];
 
-  useEffect(() => {
-    // Get latitude and longitude
-    const latitude = location?.coords.latitude;
-    const longitude = location?.coords.longitude;
-    if (!latitude || !longitude) return;
+    // Filter constellations that have an associated image file.
+    const processedConstellations = constellationLinesData.filter(
+      (con) => !!con.image?.file // Removed : any, type is now inferred correctly
+    );
 
-    // Calculate the point on the sphere
-    const point = latLonToPointOnSphere(latitude, longitude, tilt, radius, origin);
+    processedConstellations.forEach((constellation) => { // Removed : any, type is now inferred correctly
+      const linePointsForThisConstellation: Vector3[] = [];
+      constellation.lines.forEach((lineSegment: number[]) => { // Type for lineSegment remains
+        for (let i = 0; i < lineSegment.length - 1; i++) {
+          const star1Pos = starHipMap.get(lineSegment[i]);
+          const star2Pos = starHipMap.get(lineSegment[i + 1]);
 
-    // Set the camera position to the point
-    camera.lookAt(new Vector3(point.x, point.y, point.z));
-    console.log("point", point, "location", location);
-  }, [location, camera]);
+          if (star1Pos && star2Pos) {
+            lines.push(star1Pos.clone(), star2Pos.clone());
+            linePointsForThisConstellation.push(star1Pos.clone());
+            if (i === lineSegment.length -2) {
+                linePointsForThisConstellation.push(star2Pos.clone());
+            }
+          }
+        }
+      });
+
+      if (linePointsForThisConstellation.length > 0) {
+        const centroid = new Vector3();
+        linePointsForThisConstellation.forEach(p => centroid.add(p));
+        centroid.divideScalar(linePointsForThisConstellation.length);
+        constellationNames.push({
+            name: constellation.common_name?.native || constellation.common_name?.english || constellation.id, // Prioritize native name
+            position: centroid.multiplyScalar(1.05)
+        });
+      }
+    });
+
+    if (lines.length === 0) return null;
+
+    const geometry = new BufferGeometry().setFromPoints(lines);
+    const material = new LineBasicMaterial({ color: 0x446688, linewidth: 0.5, transparent: true, opacity: 0.5 });
+
+    const textRotationZ = latitude < 0 ? Math.PI : 0;
+    return { geometry, material, names: constellationNames.map(cn => ({...cn, rotationZ: textRotationZ })) };
+  }, [starHipMap, constellationLinesData, latitude]);
+
+  if (!constellationLineSegments) return null;
 
   return (
-    <div ref={containerRef} className="absolute m-0 p-0 h-full w-full">
-      <Canvas
-        eventSource={containerRef.current ?? undefined} // Ensure events are sourced from this div
-        camera={camera}
-      >
-        {/* Earth sphere */}
-        <mesh>
-          <sphereGeometry args={[radius]} />
-          <meshBasicMaterial color="blue" wireframe={true} />
-        </mesh>
-
-        <NightSkyRenderer stars={brightStars as Star[]} />
-        <CameraControls camera={camera} makeDefault />
-      </Canvas>
-    </div>
+    <group>
+      <lineSegments geometry={constellationLineSegments.geometry} material={constellationLineSegments.material} />
+      {constellationLineSegments.names.map((item, index) => (
+        <Text
+            key={index}
+            position={item.position}
+            fontSize={CELESTIAL_SPHERE_RADIUS / 100}
+            color="lightblue"
+            anchorX="center"
+            anchorY="middle"
+            maxWidth={200}
+            rotation={[0, 0, item.rotationZ]}
+            >
+            {item.name}
+        </Text>
+      ))}
+    </group>
   );
 };
 
-// Component to render the night sky
-const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
+// Component to render the star points
+const NightSkyRenderer: FC<{ stars: Star[]; latitude: number }> = ({ stars, latitude }) => {
   const starFieldRef = useRef<Group>(null);
+  const BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD = 2.0; // Stars brighter than this will be labeled
 
-  // Filter out the Sun and stars too dim to see for a night sky view from Earth
   const visibleStars = useMemo(() => {
     return stars.filter(
-      (star) => star.id !== `Sol` && star.mag < MIN_VISUAL_MAGNITUDE
+      (star) => star.id !== 'Sol' && star.mag < MIN_VISUAL_MAGNITUDE
     );
   }, [stars]);
 
-  // Prepare geometry for all stars
   const starGeometry = useMemo(() => {
     const geometry = new BufferGeometry();
     const positions: number[] = [];
@@ -156,8 +226,6 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
       if (star.ra !== undefined && star.dec !== undefined) {
         [x, y, z] = raDecToCartesian(star.ra, star.dec, CELESTIAL_SPHERE_RADIUS);
       } else {
-        // Fallback: use x,y,z as directional vectors if RA/Dec are missing
-        // This is less accurate for a celestial sphere but provides a fallback
         const dirLength = Math.sqrt(star.x ** 2 + star.y ** 2 + star.z ** 2) || 1;
         x = (star.x / dirLength) * CELESTIAL_SPHERE_RADIUS;
         y = (star.y / dirLength) * CELESTIAL_SPHERE_RADIUS;
@@ -165,106 +233,219 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
       }
       positions.push(x, y, z);
 
-      // Color from atmospheric_color
       const starColor = new Color(star.atmospheric_color || "#FFFFFF");
       colors.push(starColor.r, starColor.g, starColor.b);
 
-      // Size based on magnitude (lower mag = brighter = larger point)
-      // This is a visual representation, not physical size
-      // We want a logarithmic response, as magnitude is logarithmic
-      // A magnitude difference of 5 is a factor of 100 in brightness
-      // Max size for very bright stars (e.g., mag -1.5 like Sirius), min for dim ones
       const visualSize = Math.max(
-        1, // Minimum visual size
-        Math.pow(1.912, -star.mag)// Adjust divisor for overall scaling
+        0.5, // Minimum visual size
+        Math.pow(2.0, -star.mag) * 2.5 // Adjusted scaling for better visibility
       );
       pointSizes.push(visualSize);
     });
 
     geometry.setAttribute("position", new BufferAttribute(new Float32Array(positions), 3));
     geometry.setAttribute("color", new BufferAttribute(new Float32Array(colors), 3));
-    geometry.setAttribute("pointSizeAttribute", new BufferAttribute(new Float32Array(pointSizes), 1)); // Custom attribute for shader
+    geometry.setAttribute("pointSizeAttribute", new BufferAttribute(new Float32Array(pointSizes), 1));
 
     return geometry;
   }, [visibleStars]);
 
-  // Slow rotation for celestial sphere effect
-  // useFrame(({ clock }) => {
-  //   if (starFieldRef.current) {
-  //     // Simulate Earth's rotation (very slow)
-  //     // One full rotation (2*PI) per day (24 * 60 * 60 seconds)
-  //     // This will be too slow to notice immediately, so we speed it up for demo
-  //     const rotationSpeed = 0.025; // Radians per second (adjust for desired speed)
-  //     starFieldRef.current.rotation.y = clock.getElapsedTime() * rotationSpeed;
-  //   }
-  // });
+  const brightStarLabels = useMemo(() => {
+    const labels: { id: string; position: Vector3; rotationZ: number }[] = [];
+    const labeledIds = new Set<string>();
+    const sortedBrightStars = visibleStars
+      .filter(star => star.mag < BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD && star.id)
+      .sort((a, b) => a.mag - b.mag);
+    const textRotationZ = latitude < 0 ? Math.PI : 0;
+    sortedBrightStars.forEach(star => {
+      if (!star.id || labeledIds.has(star.id)) return;
+      let x: number, y: number, z: number;
+      if (star.ra !== undefined && star.dec !== undefined) {
+        [x, y, z] = raDecToCartesian(star.ra, star.dec, CELESTIAL_SPHERE_RADIUS);
+      } else {
+        const dirLength = Math.sqrt(star.x ** 2 + star.y ** 2 + star.z ** 2) || 1;
+        x = (star.x / dirLength) * CELESTIAL_SPHERE_RADIUS;
+        y = (star.y / dirLength) * CELESTIAL_SPHERE_RADIUS;
+        z = (star.z / dirLength) * CELESTIAL_SPHERE_RADIUS;
+      }
+      // Slightly offset the label position from the star point
+      labels.push({ id: star.id, position: new Vector3(x, y, z).multiplyScalar(1.02), rotationZ: textRotationZ });
+      labeledIds.add(star.id);
+    });
+    return labels;
+  }, [visibleStars, latitude]);
 
-  // Vertex Shader for star points
   const vertexShader = `
     attribute float pointSizeAttribute;
     varying vec3 vColor;
     uniform float uTime;
 
-    // Pseudo-random function
     float rand(vec2 co){
         return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
     }
 
     void main() {
-      vColor = color; // Pass color to fragment shader
+      vColor = color;
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-
-      // Basic twinkling: slightly vary size over time based on star's position
-      float twinkleFactor = 0.7 + 0.3 * rand(vec2(position.x + uTime * 0.1, position.y));
-      
-      gl_PointSize = pointSizeAttribute * twinkleFactor * (100.0 / -mvPosition.z); // Adjust size by distance and base size attribute
+      float twinkleFactor = 0.6 + 0.4 * rand(vec2(position.x + uTime * 0.05, position.y));
+      gl_PointSize = pointSizeAttribute * twinkleFactor * (300.0 / -mvPosition.z);
       gl_Position = projectionMatrix * mvPosition;
     }
   `;
 
-  // Fragment Shader for star points
   const fragmentShader = `
     varying vec3 vColor;
     uniform float uOpacity;
 
     void main() {
-      // Create a soft circular point
       float dist = length(gl_PointCoord - vec2(0.5));
-      if (dist > 0.5) discard; // Discard pixels outside the circle
-
-      float strength = 1.0 - smoothstep(0.4, 0.5, dist); // Soft edge
+      if (dist > 0.5) discard;
+      float strength = 1.0 - smoothstep(0.35, 0.5, dist);
       gl_FragColor = vec4(vColor, strength * uOpacity);
     }
   `;
 
   const shaderUniforms = useMemo(() => ({
     uTime: { value: 0.0 },
-    uOpacity: { value: 1 } // Overall opacity for stars
+    uOpacity: { value: 0.9 } // Slightly less than 1 for softer look
   }), []);
 
   useFrame(({ clock }) => {
-    if (shaderUniforms) {
-      shaderUniforms.uTime.value = clock.getElapsedTime();
-    }
+    shaderUniforms.uTime.value = clock.getElapsedTime();
   });
 
   return (
     <group ref={starFieldRef}>
-      {/* Starry background using a simple sphere with texture would be better for many stars, but points are fine for fewer bright ones */}
-      {/* Optional: A very distant sphere with a star texture for a dense background */}
-
-
       <points geometry={starGeometry}>
         <shaderMaterial
           uniforms={shaderUniforms}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
           blending={AdditiveBlending}
-          depthWrite={false} // Important for correct blending of transparent points
+          depthWrite={false}
           transparent
-          vertexColors // Use colors from geometry attribute
+          vertexColors
         />
       </points>
+      {brightStarLabels.map((label, index) => (
+        <Text
+          key={`${label.id}-${index}`}
+          position={label.position}
+          fontSize={CELESTIAL_SPHERE_RADIUS / 150} // Adjust size as needed
+          color="#FFFFCC"
+          anchorX="left"
+          anchorY="middle"
+          material-depthWrite={false} // Ensure text renders correctly with transparent points
+          rotation={[0, 0, label.rotationZ]}
+        >
+          {label.id}
+        </Text>
+      ))}
     </group>
+  );
+};
+
+// Main 3D component
+export const THREEDComponents: FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [location, setLocation] = useState<GeolocationPosition | undefined>();
+  const [constellationCultureData, setConstellationCultureData] = useState<SkyCultureData | null>(null);
+  const [allStarsData, setAllStarsData] = useState<Star[] | null>(null); // Added state for allStarsData
+  const [skyRotationY, setSkyRotationY] = useState<number>(0);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      setLocation(position);
+    });
+
+    fetch('/data/constellations.json')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.constellations) {
+          setConstellationCultureData(data as SkyCultureData);
+        } else {
+          setConstellationCultureData({ id: data.id, constellations: data.constellations } as SkyCultureData);
+        }
+      })
+      .catch(err => console.error("Failed to load constellation data from /data/constellations.json:", err));
+
+    fetch('/data/bright_stars.json') // Fetch bright_stars.json
+      .then(res => res.json())
+      .then(data => {
+        setAllStarsData(data as Star[]);
+      })
+      .catch(err => console.error("Failed to load star data from /data/bright_stars.json:", err));
+  }, []);
+
+  const camera = useMemo(() => {
+    const camInstance = new ThreePerspectiveCamera(60, typeof window !== "undefined" ? window.innerWidth / window.innerHeight : 1, 0.1, CELESTIAL_SPHERE_RADIUS * 2.5);
+    camInstance.position.set(0, 0, 0);
+    return camInstance;
+  }, []);
+
+  useEffect(() => {
+    if (!location?.coords || !camera) return;
+
+    const latitude = location.coords.latitude;
+    const longitude = location.coords.longitude;
+
+    const lookAtPoint = latLonToPointOnSphere(latitude, longitude, tilt, earthRadius, origin);
+
+    // Determine camera up vector based on hemisphere
+    const cameraUp = new Vector3(0, 1, 0); // Default for Northern Hemisphere
+    if (latitude < 0) { // Southern Hemisphere
+      cameraUp.set(0, -1, 0);
+    }
+    camera.up.copy(cameraUp);
+
+    camera.lookAt(lookAtPoint);
+    camera.updateProjectionMatrix(); // Important after changing lookAt
+
+  }, [location, camera]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (camera && typeof window !== "undefined") {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, [camera]);
+
+  // Now derive allStars from allStarsData state
+  const allStars = useMemo(() => allStarsData || [], [allStarsData]);
+
+  return (
+    <div ref={containerRef} className="absolute m-0 p-0 h-full w-full">
+      {typeof window !== "undefined" && containerRef.current && allStarsData && constellationCultureData && ( // Render only when data is loaded
+        <Canvas
+          eventSource={containerRef.current}
+          camera={camera}
+        >
+          {/* Earth sphere (optional, can be very small or just a visual cue) */}
+          <mesh scale={[earthRadius, earthRadius, earthRadius]}>
+            <sphereGeometry args={[1, 32, 32]} />
+            <meshBasicMaterial color="#000044" wireframe={false} opacity={0.7} transparent />
+          </mesh>
+
+          <group rotation={[0, skyRotationY , 0]}> {/* Added group for sky rotation */}
+            <NightSkyRenderer stars={allStars} latitude={location?.coords.latitude || 0} />
+            {constellationCultureData?.constellations && (
+              <ConstellationLinesRenderer
+                stars={allStars}
+                constellationLinesData={constellationCultureData.constellations}
+                latitude={location?.coords.latitude || 0}
+              />
+            )}
+          </group>
+          <CameraControls makeDefault minDistance={earthRadius * 1.1} maxDistance={CELESTIAL_SPHERE_RADIUS * 1.5} dollySpeed={0.5} />
+        </Canvas>
+      )}
+    </div>
   );
 };
