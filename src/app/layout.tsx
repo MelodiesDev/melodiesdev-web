@@ -1,7 +1,10 @@
+"use client"
+
 import "./globals.css";
 import Icon from "@/app/icon.png";
 import MelodiesDev from "@/assets/melodiesdev.svg";
 import { THREEDComponents } from "@/components/3DComponents";
+import { DateTimePicker } from "@/components/DateTimePicker";
 import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import { cn } from "@/lib/utils";
@@ -12,7 +15,7 @@ import { Nunito } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
-import type { FC } from "react";
+import { useState, FC } from "react";
 
 // Initialize Nunito font
 const nunito = Nunito({
@@ -20,28 +23,28 @@ const nunito = Nunito({
   variable: "--font-sans"
 });
 
-export const metadata: Metadata = {
-  title: "MelodiesDevelopment",
-  description:
-    "Melody's personal portfolio showcasing projects in game development (Minecraft Plugins, Marvel Rivals), web development (React, Next.js), and artwork. Check out Psylocke.gg for Marvel Rivals guides!",
-  keywords: [
-    "Melody",
-    "MelodiesDev",
-    "developer",
-    "portfolio",
-    "fullstack",
-    "React",
-    "Next.js",
-    "TypeScript",
-    "Minecraft",
-    "plugins",
-    "game development",
-    "web development",
-    "artwork",
-    "Marvel Rivals",
-    "Psylocke.gg"
-  ]
-};
+// export const metadata: Metadata = {
+//   title: "MelodiesDevelopment",
+//   description:
+//     "Melody's personal portfolio showcasing projects in game development (Minecraft Plugins, Marvel Rivals), web development (React, Next.js), and artwork. Check out Psylocke.gg for Marvel Rivals guides!",
+//   keywords: [
+//     "Melody",
+//     "MelodiesDev",
+//     "developer",
+//     "portfolio",
+//     "fullstack",
+//     "React",
+//     "Next.js",
+//     "TypeScript",
+//     "Minecraft",
+//     "plugins",
+//     "game development",
+//     "web development",
+//     "artwork",
+//     "Marvel Rivals",
+//     "Psylocke.gg"
+//   ]
+// };
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -118,19 +121,24 @@ const Footer: FC = () => (
   </div>
 );
 
-const RootLayout: FC<RootLayoutProps> = ({ children }) => (
-  <html lang="en" className={nunito.variable}>
-    <body className={cn("radial-gradient ark font-sans", nunito.className)}>
-      <section className="radial-gradient relative min-h-screen min-w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <THREEDComponents />
-        </div>
-        <Header />
-        <div className="relative z-50 h-full w-full">{children}</div>
-        <Footer />
-      </section>
-    </body>
-  </html>
-);
+const RootLayout: FC<RootLayoutProps> = ({ children }) => {
+  const [overrideDate, setOverrideDate] = useState<Date>(new Date());
+
+  return (
+    <html lang="en" className={nunito.variable}>
+      <body className={cn("radial-gradient ark font-sans", nunito.className)}>
+        <DateTimePicker onDateTimeChangeAction={setOverrideDate} />
+        <section className="radial-gradient relative min-h-screen min-w-full overflow-hidden">
+          <div className="pointer-events-none absolute inset-0">
+            <THREEDComponents overrideDate={overrideDate} />
+          </div>
+          <Header />
+          <div className="relative z-50 h-full w-full">{children}</div>
+          <Footer />
+        </section>
+      </body>
+    </html>
+  );
+};
 
 export default RootLayout;
