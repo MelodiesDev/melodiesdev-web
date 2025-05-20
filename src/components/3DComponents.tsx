@@ -15,6 +15,7 @@ import {
   Quaternion,
   Euler,
   TextureLoader,
+  // max, // GLSL max is built-in, not from 'three'
 } from "three";
 import { CameraControls, Text, Billboard } from "@react-three/drei";
 import brightStarsJson from "@/data/bright_stars.json";
@@ -519,67 +520,20 @@ const arcsecToRadians = (arcsec: number): number => toRadians(arcsec / 3600);
 
 // Component to render the Sun
 interface SunRendererProps {
-  overrideDate: Date;
-  onPositionUpdate?: (position: Vector3) => void; // This prop can be removed if not used
+  worldPosition: THREE.Vector3; // Sun's world position
 }
 
-const SunRenderer: FC<SunRendererProps> = ({ overrideDate, onPositionUpdate }) => {
+const SunRenderer: FC<SunRendererProps> = ({ worldPosition }) => {
   const sunRef = useRef<Group>(null!);
 
-  const sunGCRSVector = useMemo(() => {
-    const currentEpoch = overrideDate.getTime();
-    let raHours: number | undefined;
-    let decDegrees: number | undefined;
-
-    if (Math.abs(currentEpoch - referenceDateEpoch) < 1000) {
-      const sunRefData = getReferenceBodyData("sun");
-      if (sunRefData) {
-        raHours = parseFloat(sunRefData.position.equatorial.rightAscension.hours);
-        decDegrees = parseFloat(sunRefData.position.equatorial.declination.degrees);
-      }
-    }
-
-    if (raHours !== undefined && decDegrees !== undefined) {
-      // Use reference data if available for the specific date
-      const [x,y,z] = raDecToCartesian(raHours, decDegrees, SUN_SCENE_DISTANCE);
-      return new Vector3(x,y,z);
-    } else {
-      // Fallback to original calculation for other dates
-      const now = overrideDate;
-      const jd = (now.getTime() / 86400000) + 2440587.5; 
-      const t = (jd - 2451545.0) / 36525; 
-      const epsilon0_arcsec = 84381.406 - 46.836769 * t - 0.0001831 * t*t + 0.00200340 * t*t*t - 0.000000576 * t*t*t*t - 0.0000000434 * t*t*t*t*t;
-      const meanObliquity_rad = arcsecToRadians(epsilon0_arcsec);
-      let L_sun_deg = (280.46646 + 36000.76983 * t + 0.0003032 * t * t);
-      L_sun_deg = L_sun_deg % 360;
-      if (L_sun_deg < 0) L_sun_deg += 360;
-      let M_sun_deg = (357.52911 + 35999.05029 * t - 0.0001537 * t * t);
-      M_sun_deg = M_sun_deg % 360;
-      if (M_sun_deg < 0) M_sun_deg += 360;
-      const M_sun_rad = toRadians(M_sun_deg);
-      const C_sun_deg = (1.914602 - 0.004817 * t - 0.000014 * t * t) * Math.sin(M_sun_rad) +
-                        (0.019993 - 0.000101 * t) * Math.sin(2 * M_sun_rad) +
-                        0.000289 * Math.sin(3 * M_sun_rad);
-      const lambda_sun_deg = L_sun_deg + C_sun_deg;
-      const lambda_sun_rad = toRadians(lambda_sun_deg);
-      const X_sun_std = SUN_SCENE_DISTANCE * Math.cos(lambda_sun_rad);
-      const Y_sun_std = SUN_SCENE_DISTANCE * Math.sin(lambda_sun_rad) * Math.cos(meanObliquity_rad);
-      const Z_sun_std = SUN_SCENE_DISTANCE * Math.sin(lambda_sun_rad) * Math.sin(meanObliquity_rad);
-      const finalSunX = X_sun_std;
-      const finalSunY = Z_sun_std;
-      const finalSunZ = -Y_sun_std;
-      return new Vector3(finalSunX, finalSunY, finalSunZ);
-    }
-  }, [overrideDate]);
-
   useEffect(() => {
-    if (onPositionUpdate) {
-      onPositionUpdate(sunGCRSVector);
+    if (sunRef.current) {
+      sunRef.current.position.copy(worldPosition);
     }
-  }, [sunGCRSVector, onPositionUpdate]);
+  }, [worldPosition]);
 
   return (
-    <group ref={sunRef} position={sunGCRSVector}>
+    <group ref={sunRef} position={worldPosition}>
       <mesh>
         <sphereGeometry args={[SUN_VISUAL_RADIUS, 32, 32]} />
         <meshStandardMaterial emissive="#FFFF00" emissiveIntensity={2} color="#FFFF00" />
@@ -591,6 +545,100 @@ const SunRenderer: FC<SunRendererProps> = ({ overrideDate, onPositionUpdate }) =
         distance={SUN_SCENE_DISTANCE * 4}
       />
     </group>
+  );
+};
+
+// SkyDome Component based on three.js Sky example
+interface SkyDomeProps {
+  sunPosition: THREE.Vector3;
+  skyRadius: number; // New prop for dynamic radius
+  baseOpacity: number; // New prop for base daytime opacity
+  observerSunElevationFactor: number; // New prop for observer's sun elevation factor
+}
+
+const SkyDome: FC<SkyDomeProps> = ({ sunPosition, skyRadius, baseOpacity, observerSunElevationFactor }) => {
+  const skyRef = useRef<THREE.Mesh>(null!);
+
+  const skyMaterial = useMemo(() => {
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        sunPosition: { value: new THREE.Vector3() }, // Will be updated with normalized direction
+        up: { value: new THREE.Vector3(0, 1, 0) }, // Assuming Y is up in world space for skybox
+        uBaseOpacity: { value: baseOpacity }, // Use prop for base opacity
+        uObserverSunElevationFactor: { value: observerSunElevationFactor }, // New prop for observer's sun elevation factor
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vWorldPosition;
+        uniform vec3 sunPosition; // Normalized direction to the sun in world space
+        uniform vec3 up; // World up vector (0,1,0)
+        uniform float uBaseOpacity; 
+        uniform float uObserverSunElevationFactor;
+
+        const float pi = 3.141592653589793238462643383279502884197169;
+
+        void main() {
+          vec3 viewDirection = normalize(vWorldPosition - cameraPosition);
+          vec3 sunDirection = normalize(sunPosition);
+
+          // Simplified sky color based on sun elevation
+          vec3 daySkyColor = vec3(0.5, 0.7, 0.9); // Light blue for day
+          vec3 nightSkyColor = vec3(0.01, 0.02, 0.05); // Dark blue for night
+          vec3 horizonColor = vec3(0.8, 0.6, 0.4); // Orangey near horizon at sunset/sunrise
+
+          // Blend between day and night based on OBSERVER'S sun elevation factor
+          float dayFactor = smoothstep(0.0, 0.15, uObserverSunElevationFactor); // Use observer factor, maybe a tighter transition (0.0 to 0.15)
+
+          vec3 skyColor = mix(nightSkyColor, daySkyColor, dayFactor);
+
+          // Add a horizon glow effect when sun is near horizon (using observer factor)
+          float horizonSmoothFactor = smoothstep(0.0, 0.1, uObserverSunElevationFactor) * (1.0 - smoothstep(0.1, 0.20, uObserverSunElevationFactor));
+          // Make horizon glow stronger towards the horizon line (viewDirection.y close to 0 if up is (0,1,0))
+          horizonSmoothFactor *= (1.0 - smoothstep(0.0, 0.3, abs(dot(viewDirection, up)))); 
+          skyColor = mix(skyColor, horizonColor, horizonSmoothFactor * 0.7);
+
+          // Ensure color is not negative
+          skyColor = max(skyColor, vec3(0.0));
+
+          // Gamma correction (simplified)
+          skyColor = pow(skyColor, vec3(1.0/2.2));
+
+          // Calculate final opacity based on sun elevation for night transparency
+          float finalOpacity = clamp(uBaseOpacity * dayFactor, 0.0, uBaseOpacity); // Ensure clamped range
+
+          // gl_FragColor = vec4(skyColor, uOpacity);
+          gl_FragColor = vec4(skyColor, finalOpacity);
+        }
+      `,
+      side: THREE.BackSide,
+      depthWrite: false, 
+      transparent: true,
+    });
+
+    return material;
+  }, [baseOpacity, observerSunElevationFactor]); // Corrected dependencies
+
+  useFrame(({ camera }) => {
+    if (skyRef.current && skyMaterial) {
+      const sunDirNormalized = new THREE.Vector3().copy(sunPosition).normalize(); 
+      skyMaterial.uniforms.sunPosition.value.copy(sunDirNormalized);
+      skyMaterial.uniforms.uBaseOpacity.value = baseOpacity; // Update if baseOpacity prop changes
+      skyMaterial.uniforms.uObserverSunElevationFactor.value = observerSunElevationFactor; // Update if observer's sun elevation factor changes
+    }
+  });
+
+  return (
+    <mesh ref={skyRef} material={skyMaterial}>
+      {/* Make the skybox very large, but slightly smaller than celestial sphere to avoid z-fighting if stars are at that exact radius */}
+      <sphereGeometry args={[skyRadius, 64, 32]} />
+    </mesh>
   );
 };
 
@@ -946,6 +994,7 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
   const [controlsReady, setControlsReady] = useState(false);
   const [location, setLocation] = useState<GeolocationPosition | undefined>();
   const [moonTexture, setMoonTexture] = useState<THREE.Texture | null>(null);
+  const [observerSunActualElevationFactor, setObserverSunActualElevationFactor] = useState(0.0); // New state
 
   // Log the overrideDate received by THREEDComponents
   useEffect(() => {
@@ -1230,6 +1279,17 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
     let targetName = "Zenith (Default)";
     const horizonTolerance = -0.05; // Allow objects to be slightly below horizon
 
+    // Calculate sun elevation relative to observer for SkyDome transparency
+    if (sunGCRSPos_Standard) {
+      const sunDirFromObserverGCRS = new THREE.Vector3().subVectors(sunGCRSPos_Standard, observerGCRSPos).normalize();
+      // sunElevationRelativeToObserver is cos(angle between sun and observer's zenith)
+      // It's 1 if sun is at zenith, 0 if sun is at horizon, negative if below horizon.
+      const sunElevationRelativeToObserver = observerUpVector_GCRS.dot(sunDirFromObserverGCRS);
+      setObserverSunActualElevationFactor(Math.max(0.0, sunElevationRelativeToObserver));
+    } else {
+      setObserverSunActualElevationFactor(0.0); // Sun position not available, assume night for skydome
+    }
+
     // Define daytime as 6:00 AM (inclusive) to 6:00 PM (exclusive) local time
     const isDayTime = localHours >= 6 && localHours < 18;
 
@@ -1300,6 +1360,59 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
 
   }, [overrideDate, location, camera, GCRS_TO_WORLD_FRAME_Q, controlsReady]); // Dependencies
 
+  // Calculate Sun's GCRS position (world position for the scene)
+  const sunWorldPosition = useMemo(() => {
+    const currentEpoch = overrideDate.getTime();
+    let raHours: number | undefined;
+    let decDegrees: number | undefined;
+
+    if (Math.abs(currentEpoch - referenceDateEpoch) < 1000) {
+      const sunRefData = getReferenceBodyData("sun");
+      if (sunRefData) {
+        raHours = parseFloat(sunRefData.position.equatorial.rightAscension.hours);
+        decDegrees = parseFloat(sunRefData.position.equatorial.declination.degrees);
+      }
+    }
+
+    if (raHours !== undefined && decDegrees !== undefined) {
+      const [x,y,z] = raDecToCartesian(raHours, decDegrees, SUN_SCENE_DISTANCE);
+      return new Vector3(x,y,z);
+    } else {
+      const now = overrideDate;
+      const jd = (now.getTime() / 86400000) + 2440587.5; 
+      const t = (jd - 2451545.0) / 36525; 
+      const epsilon0_arcsec = 84381.406 - 46.836769 * t - 0.0001831 * t*t + 0.00200340 * t*t*t - 0.000000576 * t*t*t*t - 0.0000000434 * t*t*t*t*t;
+      const meanObliquity_rad = arcsecToRadians(epsilon0_arcsec);
+      let L_sun_deg = (280.46646 + 36000.76983 * t + 0.0003032 * t * t);
+      L_sun_deg = L_sun_deg % 360;
+      if (L_sun_deg < 0) L_sun_deg += 360;
+      let M_sun_deg = (357.52911 + 35999.05029 * t - 0.0001537 * t * t);
+      M_sun_deg = M_sun_deg % 360;
+      if (M_sun_deg < 0) M_sun_deg += 360;
+      const M_sun_rad = toRadians(M_sun_deg);
+      const C_sun_deg = (1.914602 - 0.004817 * t - 0.000014 * t * t) * Math.sin(M_sun_rad) +
+                        (0.019993 - 0.000101 * t) * Math.sin(2 * M_sun_rad) +
+                        0.000289 * Math.sin(3 * M_sun_rad);
+      const lambda_sun_deg = L_sun_deg + C_sun_deg;
+      const lambda_sun_rad = toRadians(lambda_sun_deg);
+      const raSunRad = Math.atan2(Math.sin(lambda_sun_rad) * Math.cos(meanObliquity_rad), Math.cos(lambda_sun_rad));
+      const decSunRad = Math.asin(Math.sin(lambda_sun_rad) * Math.sin(meanObliquity_rad));
+      const raSunHours = toDegrees(raSunRad)/15;
+      const decSunDegrees = toDegrees(decSunRad);
+      const [x,y,z] = raDecToCartesian(raSunHours, decSunDegrees, SUN_SCENE_DISTANCE);
+      return new Vector3(x,y,z); 
+    }
+  }, [overrideDate]);
+
+  // cameraLocalPosition is defined here, once.
+  // const cameraLocalPosition = useMemo(() => { // THIS ONE IS ALREADY DEFINED EARLIER (around line 1109), so this is a duplicate
+  //   if (!location?.coords) return new Vector3(0, earthRadius, 0); 
+  //   const latitude = location.coords.latitude;
+  //   const longitude = location.coords.longitude;
+  //   const [x, y, z] = latLonToLocalPointOnSphere(latitude, longitude, earthRadius);
+  //   return new Vector3(x, y, z); 
+  // }, [location]);
+
   return (
     <div ref={containerRef} className="fixed inset-0 size-full">
       {typeof window !== "undefined" && containerRef.current && (
@@ -1317,7 +1430,13 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
             makeDefault 
           /> 
           
-          <SunRenderer overrideDate={overrideDate} />
+          <SunRenderer worldPosition={sunWorldPosition} />
+          <SkyDome 
+            sunPosition={sunWorldPosition} 
+            skyRadius={earthRadius * 1.05} 
+            baseOpacity={0.85} // Keep original uOpacity as base for daytime
+            observerSunElevationFactor={observerSunActualElevationFactor} // Pass new factor
+          />
           
           <AccurateEarth overrideDate={overrideDate} observerLocation={location}>
              {/* MoonRenderer moved out of AccurateEarth */}
@@ -1333,7 +1452,7 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
               GCRS_TO_WORLD_FRAME_Q={GCRS_TO_WORLD_FRAME_Q} 
             />}
 
-          <NightSkyRenderer stars={allStars} />
+          <NightSkyRenderer  stars={allStars} />
           {constellationCultureData?.constellations && (
             <ConstellationLinesRenderer
               stars={allStars}
