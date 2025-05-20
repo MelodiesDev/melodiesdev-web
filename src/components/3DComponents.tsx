@@ -146,6 +146,9 @@ const SUN_VISUAL_RADIUS = earthRadius * 0.2; // Visual radius for the Sun in the
 const AU_KM = 149597870.7; // Astronomical Unit in Kilometers
 const J2000_JD = 2451545.0; // Julian Day for J2000.0 epoch from planetary_bodies.json
 
+// Define Moon orbit visual scaling constant globally
+const MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS = earthRadius * 5; // Visual scaling for moon's orbit semi-major axis
+
 // Kepler's Equation solver (iterative)
 const solveKepler = (meanAnomalyRad: number, eccentricity: number, iterations = 5): number => {
   let eccentricAnomalyRad = meanAnomalyRad; // Initial guess
@@ -658,53 +661,46 @@ const AccurateEarth = (props: { overrideDate: Date; children?: React.ReactNode; 
 interface MoonRendererProps { 
   moonTexture: THREE.Texture | null; 
   overrideDate: Date;
+  GCRS_TO_WORLD_FRAME_Q: THREE.Quaternion; // Added prop for transformation
 }
 
-const MoonRenderer: FC<MoonRendererProps> = ({ moonTexture, overrideDate }) => {
+const MoonRenderer: FC<MoonRendererProps> = ({ moonTexture, overrideDate, GCRS_TO_WORLD_FRAME_Q }) => {
   const moonRef = useRef<THREE.Group>(null!);
-  const moonRadius = earthRadius * 0.135; // Adjusted: Halved from 0.27 for smaller visual size
+  const moonRadius = earthRadius * 0.135; 
   const moonDataFromPlanetBodies = (planetaryBodiesData.planets.find(p => p.name.toLowerCase() === 'moon')) as PlanetOrbitalElements | undefined;
   
-  // Define the target semi-major axis for the Moon in scene units
-  const MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS = earthRadius * 5; // Visual scaling for moon's orbit semi-major axis
+  const MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS = earthRadius * 5;
 
-  const moonPositionECEF = useMemo(() => {
-    console.log(`[MoonRenderer V2] Calculating for overrideDate: ${overrideDate.toISOString()}`);
+  // Renamed from moonPositionData to moonGCRSPosition, returns only GCRS vector now
+  const moonGCRSPosition = useMemo(() => {
+    console.log(`[MoonRenderer V3] Calculating GCRS for overrideDate: ${overrideDate.toISOString()}`);
     const overrideJD = (overrideDate.getTime() / 86400000) + 2440587.5;
 
     if (!moonDataFromPlanetBodies) {
-      console.error("[MoonRenderer V2] CRITICAL: Moon orbital elements not found in planetary_bodies.json!");
-      return new Vector3(MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS, 0, 0); 
+      console.error("[MoonRenderer V3] CRITICAL: Moon orbital elements not found!");
+      return new Vector3(MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS, 0, 0); // Fallback GCRS
     }
 
-    // 1. Keplerian elements for Moon's orbit around Earth
     const daysSinceEpoch = overrideJD - J2000_JD;
     const meanMotionRadPerDay = (2 * Math.PI) / moonDataFromPlanetBodies.orbital_period_days;
     let meanAnomalyRad = toRadians(moonDataFromPlanetBodies.mean_anomaly_at_epoch_deg) + meanMotionRadPerDay * daysSinceEpoch;
-    meanAnomalyRad = meanAnomalyRad % (2 * Math.PI); // Normalize mean anomaly
+    meanAnomalyRad = meanAnomalyRad % (2 * Math.PI);
     if (meanAnomalyRad < 0) meanAnomalyRad += (2 * Math.PI);
 
     const eccentricity = moonDataFromPlanetBodies.orbital_eccentricity;
     const eccentricAnomalyRad = solveKepler(meanAnomalyRad, eccentricity);
     
-    // Ensure trueAnomalyRad is defined once, correctly, before it's needed.
     const trueAnomalyRad = 2 * Math.atan2(
       Math.sqrt(1 + eccentricity) * Math.sin(eccentricAnomalyRad / 2),
       Math.sqrt(1 - eccentricity) * Math.cos(eccentricAnomalyRad / 2)
     );
     
-    // Corrected logic for distanceFromEarthSceneUnits:
-    // The term (1 - eccentricity * Math.cos(eccentricAnomalyRad)) is the ratio of current distance to semi-major axis.
-    // MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS is the desired semi-major axis IN SCENE UNITS.
-    // So, the current distance in scene units is this ratio times the scene's semi-major axis.
     const distanceFromEarthSceneUnits = MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS * (1 - eccentricity * Math.cos(eccentricAnomalyRad));
-    console.log(`[MoonRenderer V2] distanceFromEarthSceneUnits (corrected): ${distanceFromEarthSceneUnits}`); // Clarified log
+    console.log(`[MoonRenderer V3] distanceFromEarthSceneUnits: ${distanceFromEarthSceneUnits}`);
 
     const x_op = distanceFromEarthSceneUnits * Math.cos(trueAnomalyRad);
     const y_op = distanceFromEarthSceneUnits * Math.sin(trueAnomalyRad);
-    console.log(`[MoonRenderer V2] Orbital Plane Coords (x_op, y_op): ${x_op}, ${y_op}`);
 
-    // 2. Transform to Geocentric Ecliptic Coordinates
     const iRad_moon_ecl = toRadians(moonDataFromPlanetBodies.orbital_inclination_degrees);
     const omegaRad_moon_ecl = toRadians(moonDataFromPlanetBodies.longitude_of_ascending_node_deg);
     const wRad_moon_ecl = toRadians(moonDataFromPlanetBodies.argument_of_perihelion_deg);
@@ -728,24 +724,26 @@ const MoonRenderer: FC<MoonRendererProps> = ({ moonTexture, overrideDate }) => {
       Py_ecl * x_op + Qy_ecl * y_op, 
       Pz_ecl * x_op + Qz_ecl * y_op  
     );
-    console.log("[MoonRenderer V2] Calculated Moon Geocentric Ecliptic Position (X,Y,Z):", moonEclipticPos.x, moonEclipticPos.y, moonEclipticPos.z);
+    console.log("[MoonRenderer V3] Calculated Moon Geocentric Ecliptic Position (X,Y,Z):", moonEclipticPos.x, moonEclipticPos.y, moonEclipticPos.z);
 
-    // 3. Calculate Earth's Mean Obliquity of the Ecliptic (epsilon) for the current date
     const t_obliq = (overrideJD - 2451545.0) / 36525; 
     const epsilon_arcsec = 84381.406 - 46.836769 * t_obliq - 0.0001831 * t_obliq*t_obliq + 0.00200340 * t_obliq*t_obliq*t_obliq - 0.000000576 * t_obliq*t_obliq*t_obliq*t_obliq - 0.0000000434 * t_obliq*t_obliq*t_obliq*t_obliq*t_obliq;
     const meanObliquityRad = arcsecToRadians(epsilon_arcsec);
     const cosEps = Math.cos(meanObliquityRad);
     const sinEps = Math.sin(meanObliquityRad);
 
-    // 4. Transform Geocentric Ecliptic to GCRS (Geocentric Celestial Reference System)
     const moonGCRSPos = new Vector3(
       moonEclipticPos.x,                                          
       moonEclipticPos.y * cosEps - moonEclipticPos.z * sinEps,    
       moonEclipticPos.y * sinEps + moonEclipticPos.z * cosEps     
     );
-    console.log("[MoonRenderer V2] Calculated SIMULATED Moon GCRS Position (X,Y,Z):", moonGCRSPos.x, moonGCRSPos.y, moonGCRSPos.z);
+    console.log("[MoonRenderer V3] Calculated SIMULATED Moon GCRS Position (X,Y,Z):", moonGCRSPos.x, moonGCRSPos.y, moonGCRSPos.z);
 
-    // Always log calculated RA/Dec from GCRS for the current overrideDate
+    if (moonGCRSPos.toArray().some(isNaN)) {
+        console.error("[MoonRenderer V3] ERROR: moonGCRSPos contains NaN! Using fallback GCRS.");
+        return new Vector3(MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS, 0, 0);
+    }
+    
     const R_gcrs_current = moonGCRSPos.length();
     if (R_gcrs_current > 1e-9) {
         let currentSimRaRad = Math.atan2(moonGCRSPos.y, moonGCRSPos.x);
@@ -753,122 +751,49 @@ const MoonRenderer: FC<MoonRendererProps> = ({ moonTexture, overrideDate }) => {
         const currentSimDecRad = Math.asin(moonGCRSPos.z / R_gcrs_current);
         const currentSimRA_hours = toDegrees(currentSimRaRad) / 15.0;
         const currentSimDec_degrees = toDegrees(currentSimDecRad);
-        console.log(`[MoonRenderer V2] CURRENT Sim GCRS RA/Dec: ${currentSimRA_hours.toFixed(4)}h / ${currentSimDec_degrees.toFixed(4)}° (for date ${overrideDate.toISOString()})`);
+        console.log(`[MoonRenderer V3] CURRENT Sim GCRS RA/Dec: ${currentSimRA_hours.toFixed(4)}h / ${currentSimDec_degrees.toFixed(4)}° (for date ${overrideDate.toISOString()})`);
     } else {
-        console.log(`[MoonRenderer V2] CURRENT Sim GCRS RA/Dec: Undefined (simulated GCRS position is at origin for date ${overrideDate.toISOString()})`);
+        console.log(`[MoonRenderer V3] CURRENT Sim GCRS RA/Dec: Undefined (simulated GCRS position is at origin for date ${overrideDate.toISOString()})`);
     }
 
-    // 5. Baseline comparison if overrideDate matches the reference ephemeris date
     if (Math.abs(overrideDate.getTime() - referenceDateEpoch) < 1000) {
       const refMoonData = getReferenceBodyData("moon");
       if (refMoonData?.position?.equatorial) {
         const refRA_hours = parseFloat(refMoonData.position.equatorial.rightAscension.hours);
         const refDec_deg = parseFloat(refMoonData.position.equatorial.declination.degrees);
-        console.log(`[MoonRenderer V2] BASELINE CHECK at ${overrideDate.toISOString()}:`);
+        console.log(`[MoonRenderer V3] BASELINE CHECK at ${overrideDate.toISOString()}:`);
         console.log(`  Reference RA/Dec: ${refRA_hours.toFixed(4)}h / ${refDec_deg.toFixed(4)}°`);
         
-        const R_gcrs = moonGCRSPos.length();
-        if (R_gcrs > 1e-9) { // Avoid division by zero if Moon is (erroneously) at Earth's center
-            let simulatedRaRad = Math.atan2(moonGCRSPos.y, moonGCRSPos.x); // RA from GCRS X, Y
+        if (R_gcrs_current > 1e-9) {
+            let simulatedRaRad = Math.atan2(moonGCRSPos.y, moonGCRSPos.x);
             if (simulatedRaRad < 0) simulatedRaRad += (2 * Math.PI);
-            const simulatedDecRad = Math.asin(moonGCRSPos.z / R_gcrs);   // Dec from GCRS Z
-            
-            const simulatedRA_hours = toDegrees(simulatedRaRad) / 15.0; // Convert radians to hours
-            const simulatedDec_degrees = toDegrees(simulatedDecRad);    // Convert radians to degrees
+            const simulatedDecRad = Math.asin(moonGCRSPos.z / R_gcrs_current);
+            const simulatedRA_hours = toDegrees(simulatedRaRad) / 15.0;
+            const simulatedDec_degrees = toDegrees(simulatedDecRad);
             console.log(`  Simulated GCRS RA/Dec: ${simulatedRA_hours.toFixed(4)}h / ${simulatedDec_degrees.toFixed(4)}°`);
         } else {
             console.log(`  Simulated GCRS RA/Dec: Undefined (simulated position is at GCRS origin)`);
         }
       } else {
-        console.warn("[MoonRenderer V2] Baseline check: Moon data not found in reference ephemeris for comparison.");
+        console.warn("[MoonRenderer V3] Baseline check: Moon data not found in reference ephemeris.");
       }
     }
+    
+    return moonGCRSPos; // Return GCRS position
 
-    // 6. Transform simulated GCRS Moon position to Earth's local ECEF frame for rendering
-    // This uses the same Earth orientation logic (Q_GCRS_from_ECEF) as in AccurateEarth component
-    try {
-      const now = overrideDate;
-      const jd = overrideJD; 
-      const t = (jd - 2451545.0) / 36525; // Julian centuries for ECEF transformation elements
-
-      // Earth orientation parameters (Precession, Nutation, Spin) for GCRS <-> ECEF
-      // Note: current nutation terms (nutationInLongitude_rad, nutationInObliquity_rad) are zero.
-      // Mean obliquity for Q_N is calculated here as meanObliquity_rad_for_ecef_transform
-      const epsilon0_arcsec_ecef = 84381.406 - 46.836769 * t - 0.0001831 * t*t + 0.00200340 * t*t*t - 0.000000576 * t*t*t*t - 0.0000000434 * t*t*t*t*t;
-      const meanObliquity_rad_for_ecef_transform = arcsecToRadians(epsilon0_arcsec_ecef);
-      
-      const nutationInLongitude_rad = arcsecToRadians(0); // Placeholder for actual nutation model
-      const nutationInObliquity_rad = arcsecToRadians(0); // Placeholder for actual nutation model
-      const trueObliquity_rad_for_ecef_transform = meanObliquity_rad_for_ecef_transform + nutationInObliquity_rad;
-
-      // GMST and GAST
-      const jd0 = Math.floor(jd - 0.5) + 0.5;
-      const daysSinceJ2000_0h = jd0 - 2451545.0;
-      const T0 = daysSinceJ2000_0h / 36525;
-      let gmst_hours = (6.697374558 + (2400.051336 * T0) + (0.000025862 * T0 * T0));
-      const ut_hours = now.getUTCHours() + now.getUTCMinutes()/60 + now.getUTCSeconds()/3600 + now.getUTCMilliseconds()/3600000;
-      gmst_hours += ut_hours * 1.00273790935;
-      gmst_hours = (gmst_hours % 24 + 24) % 24;
-      const gmst_rad = toRadians(gmst_hours * 15);
-      const equationOfEquinoxes_rad = nutationInLongitude_rad * Math.cos(trueObliquity_rad_for_ecef_transform);
-      const gast_rad = gmst_rad + equationOfEquinoxes_rad;
-      
-      // Precession angles (zeta_A, z_A, theta_A)
-      const p_zeta_arcsec_T   = (2306.2181 * t + 0.30188 * t*t + 0.017998 * t*t*t);
-      const p_z_arcsec_T      = (2306.2181 * t + 1.09468 * t*t + 0.018203 * t*t*t);
-      const p_theta_arcsec_T  = (2004.3109 * t - 0.42665 * t*t - 0.041833 * t*t*t);
-      const zeta_A_rad  = arcsecToRadians(p_zeta_arcsec_T);
-      const z_A_rad     = arcsecToRadians(p_z_arcsec_T);
-      const theta_A_rad = arcsecToRadians(p_theta_arcsec_T);
-
-      // Precession Quaternion Q_P (from ECEF to Mean Equator and Equinox of Date)
-      const Q_P = new THREE.Quaternion();
-      const q_z1_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), z_A_rad);
-      const q_y_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -theta_A_rad);
-      const q_z2_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), zeta_A_rad);
-      Q_P.multiplyQuaternions(q_z2_P, q_y_P).multiply(q_z1_P);
-
-      // Nutation Quaternion Q_N (from Mean to True Equator and Equinox of Date)
-      const Q_N = new THREE.Quaternion();
-      // Rotate by mean obliquity, then nutation in longitude, then by -true obliquity
-      const Q_N_Rx_mean_obliq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), meanObliquity_rad_for_ecef_transform);
-      const Q_N_Rz_delta_psi = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), nutationInLongitude_rad); 
-      const Q_N_Rx_true_obliq_neg = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), -trueObliquity_rad_for_ecef_transform);
-      Q_N.multiplyQuaternions(Q_N_Rx_mean_obliq, Q_N_Rz_delta_psi).multiply(Q_N_Rx_true_obliq_neg);
-      
-      // Precession-Nutation Q_PN (from ECEF to True Equator and Equinox of Date)
-      const Q_PN = new THREE.Quaternion().multiplyQuaternions(Q_N, Q_P);
-      
-      // Spin Quaternion Q_spin (Earth rotation, GAST, from True Equator of Date to GCRS)
-      const Q_spin = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), gast_rad); 
-      
-      // Full GCRS_from_ECEF Quaternion
-      const Q_GCRS_from_ECEF = new THREE.Quaternion().multiplyQuaternions(Q_PN, Q_spin);
-
-      // To get ECEF from GCRS, we apply the inverse of Q_GCRS_from_ECEF
-      const finalPositionECEF = moonGCRSPos.clone().applyQuaternion(Q_GCRS_from_ECEF.clone().invert());
-      console.log("[MoonRenderer V2] Calculated final SIMULATED ECEF Position (X,Y,Z):", finalPositionECEF.x, finalPositionECEF.y, finalPositionECEF.z);
-
-      if (finalPositionECEF.toArray().some(isNaN)) {
-          console.error("[MoonRenderer V2] ERROR: Final ECEF position from SIMULATED path contains NaN! Using emergency fallback.");
-          return new Vector3(MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS * 0.7, 0, 0); 
-      }
-      return finalPositionECEF;
-
-    } catch (e) {
-      console.error("[MoonRenderer V2] Error during GCRS to ECEF calculation for SIMULATED Moon:", e);
-      return new Vector3(MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS * 0.6, 0, 0); 
-    }
   }, [overrideDate, moonDataFromPlanetBodies]); 
 
 
   useEffect(() => {
-    if (moonRef.current) {
-        moonRef.current.position.copy(moonPositionECEF);
+    if (moonRef.current && moonGCRSPosition && GCRS_TO_WORLD_FRAME_Q) {
+        // Transform GCRS position to World/Scene coordinates and apply
+        const worldPosition = moonGCRSPosition.clone().applyQuaternion(GCRS_TO_WORLD_FRAME_Q);
+        moonRef.current.position.copy(worldPosition);
+        console.log("[MoonRenderer V3] Moon world position set to:", worldPosition.x, worldPosition.y, worldPosition.z);
     }
-  }, [moonPositionECEF]);
+  }, [moonGCRSPosition, GCRS_TO_WORLD_FRAME_Q]);
 
-  console.log("[MoonRenderer V2] moonTexture is loaded:", !!moonTexture); // Log texture status
+  console.log("[MoonRenderer V3] moonTexture is loaded:", !!moonTexture);
   if (!moonTexture) return null;
 
   return (
@@ -1075,18 +1000,22 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
     const effectiveLatitude = location?.coords?.latitude ?? 0;
     const effectiveLongitude = location?.coords?.longitude ?? 0;
 
-    if (!controlsReady || !controlsRef.current) { // Added !controlsReady check
+    if (!controlsReady || !controlsRef.current || !camera) { // Added !camera check
       return;
     }
     
     const now = effectiveDate; 
     const jd = (now.getTime() / 86400000) + 2440587.5;
-    const t = (jd - 2451545.0) / 36525;
+    const t = (jd - 2451545.0) / 36525; // Julian centuries for precession, nutation, earth rotation
+
+    // Earth Orientation Parameters (Consistent with AccurateEarth and MoonRenderer for GCRS <-> ECEF)
     const epsilon0_arcsec = 84381.406 - 46.836769 * t - 0.0001831 * t*t + 0.00200340 * t*t*t - 0.000000576 * t*t*t*t - 0.0000000434 * t*t*t*t*t;
-    let meanObliquity_rad = arcsecToRadians(epsilon0_arcsec);
-    let nutationInLongitude_rad = arcsecToRadians(0); 
-    let nutationInObliquity_rad = arcsecToRadians(0); 
-    const trueObliquity_rad = meanObliquity_rad + nutationInObliquity_rad;
+    const meanObliquity_rad = arcsecToRadians(epsilon0_arcsec); // Mean obliquity of date
+    const nutationInLongitude_rad = arcsecToRadians(0); // Placeholder
+    const nutationInObliquity_rad = arcsecToRadians(0); // Placeholder
+    const trueObliquity_rad = meanObliquity_rad + nutationInObliquity_rad; // True obliquity of date
+
+    // GMST and GAST (Greenwich Mean/Apparent Sidereal Time)
     const jd0 = Math.floor(jd - 0.5) + 0.5;
     const daysSinceJ2000_0h = jd0 - 2451545.0;
     const T0 = daysSinceJ2000_0h / 36525;
@@ -1096,70 +1025,280 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
     gmst_hours = (gmst_hours % 24 + 24) % 24;
     const gmst_rad = toRadians(gmst_hours * 15);
     const equationOfEquinoxes_rad = nutationInLongitude_rad * Math.cos(trueObliquity_rad);
-    const gast_rad = gmst_rad + equationOfEquinoxes_rad;
+    const gast_rad = gmst_rad + equationOfEquinoxes_rad; // GAST in radians
+
+    // Precession Angles for Q_P
     const p_zeta_arcsec_T   = (2306.2181 * t + 0.30188 * t*t + 0.017998 * t*t*t);
     const p_z_arcsec_T      = (2306.2181 * t + 1.09468 * t*t + 0.018203 * t*t*t);
     const p_theta_arcsec_T  = (2004.3109 * t - 0.42665 * t*t - 0.041833 * t*t*t);
     const zeta_A_rad  = arcsecToRadians(p_zeta_arcsec_T);
     const z_A_rad     = arcsecToRadians(p_z_arcsec_T);
     const theta_A_rad = arcsecToRadians(p_theta_arcsec_T);
+
+    // Precession Quaternion Q_P
     const Q_P = new THREE.Quaternion();
     const q_z1_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), z_A_rad);
     const q_y_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -theta_A_rad);
     const q_z2_P = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), zeta_A_rad);
     Q_P.multiplyQuaternions(q_z2_P, q_y_P).multiply(q_z1_P);
+
+    // Nutation Quaternion Q_N
     const Q_N = new THREE.Quaternion();
     const Q_N_Rx_mean_obliq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), meanObliquity_rad);
     const Q_N_Rz_delta_psi = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), nutationInLongitude_rad);
     const Q_N_Rx_true_obliq_neg = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), -trueObliquity_rad);
     Q_N.multiplyQuaternions(Q_N_Rx_mean_obliq, Q_N_Rz_delta_psi).multiply(Q_N_Rx_true_obliq_neg);
+    
+    // Precession-Nutation Q_PN
     const Q_PN = new THREE.Quaternion().multiplyQuaternions(Q_N, Q_P);
-    const Q_spin = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), gast_rad); 
+    
+    // Spin Quaternion Q_spin (Earth rotation based on GAST)
+    const Q_spin = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), gast_rad);
+    
+    // Full GCRS_from_ECEF Quaternion
     const earthOrientationQ_GCRS = new THREE.Quaternion().multiplyQuaternions(Q_PN, Q_spin);
 
+    // Observer's position in ECEF
     const latRad = toRadians(effectiveLatitude);
     const lonRad = toRadians(effectiveLongitude);
     const x_fixed = earthRadius * Math.cos(latRad) * Math.cos(lonRad);
     const y_fixed = earthRadius * Math.cos(latRad) * Math.sin(lonRad);
     const z_fixed = earthRadius * Math.sin(latRad);
     const observerECEF = new THREE.Vector3(x_fixed, y_fixed, z_fixed);
+    
+    // Observer's position in GCRS
     const observerGCRSPos = observerECEF.clone().applyQuaternion(earthOrientationQ_GCRS);
 
+    // Observer's "up" vector in GCRS (points to Zenith)
     const observerUpVector_GCRS = observerGCRSPos.clone().normalize(); 
+    
+    // Camera position in GCRS (slightly above observer)
     const cameraElevation = earthRadius * 0.002; 
     const cameraPosition_GCRS = observerGCRSPos.clone().add(observerUpVector_GCRS.clone().multiplyScalar(cameraElevation));
-
+    
+    // Transform camera position to Scene/World coordinates
     const sceneCameraPosition = cameraPosition_GCRS.clone().applyQuaternion(GCRS_TO_WORLD_FRAME_Q);
-    const celestialNorthPole_GCRS = new THREE.Vector3(0, 0, 1);
-    let localNorthDir_GCRS = celestialNorthPole_GCRS.clone().sub(observerUpVector_GCRS.clone().multiplyScalar(celestialNorthPole_GCRS.dot(observerUpVector_GCRS)));
-    if (localNorthDir_GCRS.lengthSq() < 1e-8) { 
-        const refHorizontal_GCRS = new THREE.Vector3(1,0,0);
-        localNorthDir_GCRS = refHorizontal_GCRS.clone().sub(observerUpVector_GCRS.clone().multiplyScalar(refHorizontal_GCRS.dot(observerUpVector_GCRS))).normalize();
-         if (localNorthDir_GCRS.lengthSq() < 1e-8) { 
-            const refHorizontalY_GCRS = new THREE.Vector3(0,1,0);
-            localNorthDir_GCRS = refHorizontalY_GCRS.clone().sub(observerUpVector_GCRS.clone().multiplyScalar(refHorizontalY_GCRS.dot(observerUpVector_GCRS))).normalize();
-        }
-    } else {
-        localNorthDir_GCRS.normalize();
+
+    // Determine Camera Up Vector (Observer's Zenith in Scene/World coordinates)
+    // This ensures the camera stays "level" with the observer's local horizon.
+    const sceneCameraTrueUp_world = observerUpVector_GCRS.clone().applyQuaternion(GCRS_TO_WORLD_FRAME_Q);
+    controlsRef.current.camera.up.copy(sceneCameraTrueUp_world); 
+
+    // --- Calculate Sun's GCRS position (Standard GCRS) ---
+    let sunGCRSPos_Standard: THREE.Vector3 | undefined = undefined;
+    const currentEpochForSun = effectiveDate.getTime();
+    let sunRaHoursRef: number | undefined;
+    let sunDecDegreesRef: number | undefined;
+
+    if (Math.abs(currentEpochForSun - referenceDateEpoch) < 1000) {
+      const sunRefData = getReferenceBodyData("sun");
+      if (sunRefData) {
+        sunRaHoursRef = parseFloat(sunRefData.position.equatorial.rightAscension.hours);
+        sunDecDegreesRef = parseFloat(sunRefData.position.equatorial.declination.degrees);
+      }
     }
-    const sceneCameraUp = localNorthDir_GCRS.clone().applyQuaternion(GCRS_TO_WORLD_FRAME_Q);
 
-    controlsRef.current.camera.up.copy(sceneCameraUp); 
+    if (sunRaHoursRef !== undefined && sunDecDegreesRef !== undefined) {
+      const raRadSun = toRadians(sunRaHoursRef * 15);
+      const decRadSun = toRadians(sunDecDegreesRef);
+      const rSun = SUN_SCENE_DISTANCE;
+      sunGCRSPos_Standard = new THREE.Vector3(
+          rSun * Math.cos(decRadSun) * Math.cos(raRadSun),
+          rSun * Math.cos(decRadSun) * Math.sin(raRadSun),
+          rSun * Math.sin(decRadSun)
+      );
+    } else {
+      const jdSun = jd; // Use the already calculated Julian Day
+      const tSun = t;   // Use the already calculated Julian centuries
+      const L0_sun = 280.46646; const L1_sun = 36000.76983; const L2_sun = 0.0003032;
+      const M0_sun = 357.52911; const M1_sun = 35999.05029; const M2_sun = -0.0001537;
+      const C1_sun = 1.914602; const C1t_sun = -0.004817; const C1t2_sun = -0.000014;
+      const C2_sun = 0.019993; const C2t_sun = -0.000101;
+      const C3_sun = 0.000289;
 
-    // Default: Look at Zenith
-    console.log("[THREEDComponents] Camera looking at Zenith.");
-    const finalLookDir_GCRS = new THREE.Vector3();
-    finalLookDir_GCRS.copy(observerUpVector_GCRS);
+      let L_sun_deg = (L0_sun + L1_sun * tSun + L2_sun * tSun * tSun) % 360;
+      if (L_sun_deg < 0) L_sun_deg += 360;
+      let M_sun_deg = (M0_sun + M1_sun * tSun + M2_sun * tSun * tSun) % 360;
+      if (M_sun_deg < 0) M_sun_deg += 360;
+      const M_sun_rad = toRadians(M_sun_deg);
+      
+      const C_sun_deg = (C1_sun + C1t_sun * tSun + C1t2_sun * tSun * tSun) * Math.sin(M_sun_rad) +
+                        (C2_sun + C2t_sun * tSun) * Math.sin(2 * M_sun_rad) +
+                        C3_sun * Math.sin(3 * M_sun_rad);
+      const lambda_sun_ecl_deg = L_sun_deg + C_sun_deg;
+      const lambda_sun_ecl_rad = toRadians(lambda_sun_ecl_deg);
+      
+      const rSun = SUN_SCENE_DISTANCE;
+      const x_ecl_sun = rSun * Math.cos(lambda_sun_ecl_rad);
+      const y_ecl_sun = rSun * Math.sin(lambda_sun_ecl_rad);
+      
+      const sun_meanObliquity_rad = meanObliquity_rad; // Use mean obliquity of date calculated earlier
+      const cos_eps_sun = Math.cos(sun_meanObliquity_rad);
+      const sin_eps_sun = Math.sin(sun_meanObliquity_rad);
+
+      sunGCRSPos_Standard = new THREE.Vector3(
+          x_ecl_sun,
+          y_ecl_sun * cos_eps_sun, 
+          y_ecl_sun * sin_eps_sun  
+      );
+    }
+
+    // --- Calculate Moon's GCRS position (Standard GCRS) ---
+    let moonGCRSPos_Standard: THREE.Vector3 | undefined = undefined;
+    const moonDataFromPlanetBodiesForCamera = (planetaryBodiesData.planets.find(p => p.name.toLowerCase() === 'moon')) as PlanetOrbitalElements | undefined;
+
+    if (moonDataFromPlanetBodiesForCamera) {
+      const overrideJDForMoon = jd; // Use the already calculated Julian Day
+      let moonRaHoursRef: number | undefined;
+      let moonDecDegreesRef: number | undefined;
+      // let moonDistanceAuRef: number | undefined; // Not directly used for final vector magnitude if RA/Dec from ref
+
+      if (Math.abs(effectiveDate.getTime() - referenceDateEpoch) < 1000) {
+        const refMoonData = getReferenceBodyData("moon");
+        if (refMoonData?.position?.equatorial) {
+          moonRaHoursRef = parseFloat(refMoonData.position.equatorial.rightAscension.hours);
+          moonDecDegreesRef = parseFloat(refMoonData.position.equatorial.declination.degrees);
+          // if (refMoonData.distance?.fromEarth?.au) { // Example if you wanted to use reference distance
+          //   moonDistanceAuRef = parseFloat(refMoonData.distance.fromEarth.au);
+          // }
+        }
+      }
+      
+      // Calculate orbital elements to get scene distance, then use ref RA/Dec if available
+      const daysSinceEpochMoon = overrideJDForMoon - J2000_JD;
+      const meanMotionRadPerDayMoon = (2 * Math.PI) / moonDataFromPlanetBodiesForCamera.orbital_period_days;
+      let meanAnomalyRadMoon = toRadians(moonDataFromPlanetBodiesForCamera.mean_anomaly_at_epoch_deg) + meanMotionRadPerDayMoon * daysSinceEpochMoon;
+      meanAnomalyRadMoon = meanAnomalyRadMoon % (2 * Math.PI);
+      if (meanAnomalyRadMoon < 0) meanAnomalyRadMoon += (2 * Math.PI);
+      const eccentricityMoon = moonDataFromPlanetBodiesForCamera.orbital_eccentricity;
+      const eccentricAnomalyRadMoon = solveKepler(meanAnomalyRadMoon, eccentricityMoon);
+      const rMoonSceneUnits = MOON_ORBIT_SCENE_SEMI_MAJOR_AXIS * (1 - eccentricityMoon * Math.cos(eccentricAnomalyRadMoon));
+
+      if (moonRaHoursRef !== undefined && moonDecDegreesRef !== undefined) {
+          const raRadMoon = toRadians(moonRaHoursRef * 15);
+          const decRadMoon = toRadians(moonDecDegreesRef);
+          moonGCRSPos_Standard = new THREE.Vector3(
+              rMoonSceneUnits * Math.cos(decRadMoon) * Math.cos(raRadMoon),
+              rMoonSceneUnits * Math.cos(decRadMoon) * Math.sin(raRadMoon),
+              rMoonSceneUnits * Math.sin(decRadMoon)
+          );
+      } else {
+        // Full Keplerian calculation for GCRS position if not reference time
+        const trueAnomalyRadMoon = 2 * Math.atan2(
+          Math.sqrt(1 + eccentricityMoon) * Math.sin(eccentricAnomalyRadMoon / 2),
+          Math.sqrt(1 - eccentricityMoon) * Math.cos(eccentricAnomalyRadMoon / 2)
+        );
+        const x_op_moon = rMoonSceneUnits * Math.cos(trueAnomalyRadMoon);
+        const y_op_moon = rMoonSceneUnits * Math.sin(trueAnomalyRadMoon);
+
+        const iRad_moon_ecl = toRadians(moonDataFromPlanetBodiesForCamera.orbital_inclination_degrees);
+        const omegaRad_moon_ecl = toRadians(moonDataFromPlanetBodiesForCamera.longitude_of_ascending_node_deg);
+        const wRad_moon_ecl = toRadians(moonDataFromPlanetBodiesForCamera.argument_of_perihelion_deg);
+        
+        const cosOmega_ecl = Math.cos(omegaRad_moon_ecl); const sinOmega_ecl = Math.sin(omegaRad_moon_ecl);
+        const cosW_ecl = Math.cos(wRad_moon_ecl); const sinW_ecl = Math.sin(wRad_moon_ecl);
+        const cosI_ecl = Math.cos(iRad_moon_ecl); const sinI_ecl = Math.sin(iRad_moon_ecl);
+
+        const Px_ecl = cosW_ecl * cosOmega_ecl - sinW_ecl * sinOmega_ecl * cosI_ecl;
+        const Py_ecl = cosW_ecl * sinOmega_ecl + sinW_ecl * cosOmega_ecl * cosI_ecl;
+        const Pz_ecl = sinW_ecl * sinI_ecl;
+        const Qx_ecl = -sinW_ecl * cosOmega_ecl - cosW_ecl * sinOmega_ecl * cosI_ecl;
+        const Qy_ecl = -sinW_ecl * sinOmega_ecl + cosW_ecl * cosOmega_ecl * cosI_ecl;
+        const Qz_ecl = cosW_ecl * sinI_ecl;
+
+        const moonEclipticPos = new THREE.Vector3(
+          Px_ecl * x_op_moon + Qx_ecl * y_op_moon,
+          Py_ecl * x_op_moon + Qy_ecl * y_op_moon,
+          Pz_ecl * x_op_moon + Qz_ecl * y_op_moon
+        );
+        
+        const moon_meanObliquity_rad = meanObliquity_rad; // Use mean obliquity of date
+        const cosEpsMoon = Math.cos(moon_meanObliquity_rad);
+        const sinEpsMoon = Math.sin(moon_meanObliquity_rad);
+
+        moonGCRSPos_Standard = new THREE.Vector3(
+          moonEclipticPos.x,
+          moonEclipticPos.y * cosEpsMoon - moonEclipticPos.z * sinEpsMoon,
+          moonEclipticPos.y * sinEpsMoon + moonEclipticPos.z * cosEpsMoon
+        );
+      }
+    }
+    
+    // --- Determine Look-At Target based on Day/Night ---
+    const localHours = effectiveDate.getHours(); // Use local hours for time conditions
+    let finalLookDir_GCRS = observerUpVector_GCRS.clone(); // Default to Zenith
+    let targetName = "Zenith (Default)";
+    const horizonTolerance = -0.05; // Allow objects to be slightly below horizon
+
+    // Define daytime as 6:00 AM (inclusive) to 6:00 PM (exclusive) local time
+    const isDayTime = localHours >= 6 && localHours < 18;
+
+    if (isDayTime) {
+      // Daytime: Prioritize Sun
+      targetName = "Sun (Attempting)";
+      if (sunGCRSPos_Standard) {
+        const sunVectorFromObserver_GCRS = new THREE.Vector3().subVectors(sunGCRSPos_Standard, observerGCRSPos);
+        if (sunVectorFromObserver_GCRS.dot(observerUpVector_GCRS) > horizonTolerance) {
+          finalLookDir_GCRS.copy(sunVectorFromObserver_GCRS).normalize();
+          targetName = "Sun";
+        } else {
+          targetName = "Sun (Below Horizon, Defaulting Zenith)";
+          // finalLookDir_GCRS remains Zenith
+        }
+      } else {
+        targetName = "Sun (Not Calculated, Defaulting Zenith)";
+        // finalLookDir_GCRS remains Zenith
+      }
+    } else {
+      // Nighttime: Prioritize Moon
+      targetName = "Moon (Attempting)";
+      if (moonGCRSPos_Standard) {
+        const moonVectorFromObserver_GCRS = new THREE.Vector3().subVectors(moonGCRSPos_Standard, observerGCRSPos);
+        if (moonVectorFromObserver_GCRS.dot(observerUpVector_GCRS) > horizonTolerance) {
+          finalLookDir_GCRS.copy(moonVectorFromObserver_GCRS).normalize();
+          targetName = "Moon";
+        } else {
+          targetName = "Moon (Below Horizon, Defaulting Zenith)";
+          // finalLookDir_GCRS remains Zenith
+        }
+      } else {
+        targetName = "Moon (Not Calculated, Defaulting Zenith)";
+        // finalLookDir_GCRS remains Zenith
+      }
+    }
+
+    console.log(`[THREEDComponents] Camera target: ${targetName} (Local Hour: ${localHours}, IsDayTime: ${isDayTime}, UTC Hour: ${effectiveDate.getUTCHours()})`);
+    
     const lookAtTarget_GCRS = cameraPosition_GCRS.clone().add(finalLookDir_GCRS.multiplyScalar(CELESTIAL_SPHERE_RADIUS));
     const sceneLookAtTarget = lookAtTarget_GCRS.clone().applyQuaternion(GCRS_TO_WORLD_FRAME_Q);
 
+    // Determine the camera's 'up' vector for setLookAt to avoid instability.
+    const lineOfSightWorld = sceneLookAtTarget.clone().sub(sceneCameraPosition).normalize();
+    let cameraUpForSetLookAt = sceneCameraTrueUp_world.clone(); // Default: observer's zenith in world coords
+
+    if (Math.abs(lineOfSightWorld.dot(cameraUpForSetLookAt)) > 0.999) { // Check for parallelism
+        console.warn("[THREEDComponents] Camera line of sight is parallel to default up vector (observer's zenith). Adjusting camera up.");
+        // If line of sight is mostly along World Y-axis (vertical)
+        if (Math.abs(lineOfSightWorld.y) > 0.9) {
+            cameraUpForSetLookAt.set(1, 0, 0); // Use World X-axis as up
+        } else { // Else (line of sight is mostly horizontal or other orientations)
+            cameraUpForSetLookAt.set(0, 1, 0); // Use World Y-axis as up
+        }
+
+        // Final safety net: if the chosen alternative is *still* parallel
+        if (Math.abs(lineOfSightWorld.dot(cameraUpForSetLookAt)) > 0.999) {
+            cameraUpForSetLookAt.set(0, 0, 1); // Fallback to World Z-axis
+        }
+    }
+
+    controlsRef.current.camera.up.copy(cameraUpForSetLookAt); // Set the chosen up vector
     controlsRef.current.setLookAt(
       sceneCameraPosition.x, sceneCameraPosition.y, sceneCameraPosition.z,
       sceneLookAtTarget.x, sceneLookAtTarget.y, sceneLookAtTarget.z,
       true // Enable smooth transition
     );
 
-  }, [overrideDate, location, camera, GCRS_TO_WORLD_FRAME_Q, controlsReady]); // Removed moonGCRSPosForCamera from dependencies
+  }, [overrideDate, location, camera, GCRS_TO_WORLD_FRAME_Q, controlsReady]); // Dependencies
 
   return (
     <div ref={containerRef} className="fixed inset-0 size-full">
@@ -1181,14 +1320,18 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate }) =>
           <SunRenderer overrideDate={overrideDate} />
           
           <AccurateEarth overrideDate={overrideDate} observerLocation={location}>
-             {moonTexture && 
-                <MoonRenderer 
-                  moonTexture={moonTexture} 
-                  overrideDate={overrideDate} 
-                />}
+             {/* MoonRenderer moved out of AccurateEarth */}
              <pointLight position={[0, 0, 0]} intensity={0} /> 
              <ambientLight intensity={0.1} />
           </AccurateEarth>
+
+          {/* MoonRenderer is now a direct child of Canvas and receives GCRS_TO_WORLD_FRAME_Q */}
+          {moonTexture && 
+            <MoonRenderer 
+              moonTexture={moonTexture} 
+              overrideDate={overrideDate}
+              GCRS_TO_WORLD_FRAME_Q={GCRS_TO_WORLD_FRAME_Q} 
+            />}
 
           <NightSkyRenderer stars={allStars} />
           {constellationCultureData?.constellations && (
