@@ -1,7 +1,7 @@
 import React, { FC, useRef, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { Group, Vector3 } from 'three';
-import { ReferenceEphemerisData, ReferenceEphemerisEntry } from 'src/components/Types';
+import { ReferenceEphemerisData, ReferenceEphemerisEntry } from '@/components/Types';
 
 // Helper functions (can be moved to a utils file if used by multiple components)
 const toRadians = (degrees: number): number => degrees * Math.PI / 180;
