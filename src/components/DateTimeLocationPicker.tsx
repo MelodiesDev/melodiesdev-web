@@ -26,25 +26,16 @@ function DatePickerInDateTimePicker({ selectedDate, onDateSelect, className }: D
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          variant={"outline"}
           className={cn(
-            "w-[200px] justify-start text-left font-normal",
-            !selectedDate && "text-muted-foreground",
+            "h-9 w-[220px] justify-start align-middle items-center flex bg-black/90 backdrop-blur-md border border-white/20 text-left font-normal",
+            !selectedDate && "text-white",
             className
           )}
-          style={{
-            color: 'white',
-            background: 'rgba(20,20,20,0.95)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            padding: 'calc(0.5rem - 1px)',
-            borderRadius: '6px',
-            marginRight: '5px',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-          }}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" style={{ color: 'white' }} />
-          {selectedDate ? format(selectedDate, "PPP") : <span style={{ color: '#aaa' }}>Pick a date</span>}
+          <div className="flex flex-row items-center">
+            <CalendarIcon className="mr-2 h-4 w-4" style={{ color: 'white' }} />
+            {selectedDate ? format(selectedDate, "PPP") : <span style={{ color: '#aaa' }}>Pick a date</span>}
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 bg-black/90 backdrop-blur-md border border-white/20" align="start">
@@ -70,18 +61,6 @@ interface DateTimeLocationPickerProps {
   manualLocation?: ManualLocation;
   onLocationChangeAction?: (location: ManualLocation) => void;
 }
-
-const commonInputStyles = {
-  color: 'white',
-  background: 'rgba(20,20,20,0.95)',
-  border: '1px solid rgba(255,255,255,0.2)',
-  padding: 'calc(0.5rem - 1px)',
-  borderRadius: '6px',
-  height: 'calc(1.5rem + 2px + 2* (0.5rem - 1px))',
-  marginLeft: '5px',
-  backdropFilter: 'blur(10px)',
-  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-};
 
 export function DateTimeLocationPicker({ onDateTimeChangeAction, manualLocation, onLocationChangeAction }: DateTimeLocationPickerProps): ReactNode {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -111,8 +90,16 @@ export function DateTimeLocationPicker({ onDateTimeChangeAction, manualLocation,
             });
           }
         },
-        (error) => {
-          console.error("Error getting location:", error);
+        () => {
+          // Silently default to 0,0 if geolocation fails
+          setLatitudeInput("0");
+          setLongitudeInput("0");
+          if (onLocationChangeAction) {
+            onLocationChangeAction({
+              latitude: 0,
+              longitude: 0
+            });
+          }
         }
       );
     }
@@ -166,72 +153,51 @@ export function DateTimeLocationPicker({ onDateTimeChangeAction, manualLocation,
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: '10px',
-      left: '10px',
-      zIndex: 99999,
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px'
-    }}>
+    <div className="absolute text-white mt-4 ml-4 flex flex-row z-50 items-stretch h-12">
       <Button
         onClick={() => setIsExpanded(!isExpanded)}
-        style={{
-          background: 'rgba(20,20,20,0.95)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: '6px',
-          padding: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-          color: 'white',
-          cursor: 'pointer',
-        }}
+        title={isExpanded ? "Collapse date, time and location picker" : "Expand date, time and location picker"}
+        className="w-10 h-10 my-auto bg-black/90 backdrop-blur-md border border-white/20 flex items-center justify-center drop-shadow-2xl text-white cursor-pointer transition-all duration-200"
       >
-        {isExpanded ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
+        {isExpanded ? <ChevronLeft/> : <ChevronRight />}
       </Button>
 
-      <div style={{
-        display: isExpanded ? 'flex' : 'none',
-        background: 'rgba(20,20,20,0.8)',
-        padding: '10px',
-        borderRadius: '8px',
-        alignItems: 'center',
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-        border: '1px solid rgba(255,255,255,0.1)',
-      }}>
-        <DatePickerInDateTimePicker
-          selectedDate={selectedDate}
-          onDateSelect={setSelectedDate}
-        />
-        <input
-          type="time"
-          value={timeInput}
-          onChange={(e) => setTimeInput(e.target.value)}
-          style={commonInputStyles}
-        />
-        <input
-          type="number"
-          value={latitudeInput}
-          onChange={(e) => handleCoordinateChange(e.target.value, true)}
-          onBlur={() => setIsUserEditing(false)}
-          placeholder="Latitude"
-          step="any"
-          style={{ ...commonInputStyles, width: '100px' }}
-        />
-        <input
-          type="number"
-          value={longitudeInput}
-          onChange={(e) => handleCoordinateChange(e.target.value, false)}
-          onBlur={() => setIsUserEditing(false)}
-          placeholder="Longitude"
-          step="any"
-          style={{ ...commonInputStyles, width: '100px' }}
-        />
+      <div 
+        className={cn(
+          "drop-shadow-2xl bg-black/90 backdrop-blur-md border border-white/20 rounded-md ml-2 transition-all duration-200 ease-in-out overflow-hidden h-12",
+          isExpanded ? "max-w-[900px] opacity-100" : "max-w-0 opacity-0 border-0"
+        )}
+      >
+        <div className="flex flex-row items-center h-full gap-5 px-3 whitespace-nowrap">
+          <DatePickerInDateTimePicker
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+          />
+          <input
+            className="drop-shadow-2xl hover:bg-primary/90 w-[140px] px-3 h-9 bg-black/90 backdrop-blur-md border border-white/20 items-center inline-block rounded-md"
+            type="time"
+            value={timeInput}
+            onChange={(e) => setTimeInput(e.target.value)}
+          />
+          <input
+            type="number"
+            className="drop-shadow-2xl hover:bg-primary/90 w-[140px] px-3 h-9 bg-black/90 backdrop-blur-md border border-white/20 items-center inline-block rounded-md"
+            value={latitudeInput}
+            onChange={(e) => handleCoordinateChange(e.target.value, true)}
+            onBlur={() => setIsUserEditing(false)}
+            placeholder="Latitude"
+            step="any"
+          />
+          <input
+            className="drop-shadow-2xl hover:bg-primary/90 w-[140px] px-3 h-9 bg-black/90 backdrop-blur-md border border-white/20 items-center inline-block rounded-md"
+            type="number"
+            value={longitudeInput}
+            onChange={(e) => handleCoordinateChange(e.target.value, false)}
+            onBlur={() => setIsUserEditing(false)}
+            placeholder="Longitude"
+            step="any"
+          />
+        </div>
       </div>
     </div>
   );

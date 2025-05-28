@@ -157,7 +157,7 @@ const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: Co
 
 const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
   const starFieldRef = useRef<Group>(null!);
-  const BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD = 1.3; 
+  const BRIGHT_STAR_LABEL_MAGNITUDE_THRESHOLD = 2.3;
   const { clock } = useThree();
 
   const visibleStars = useMemo(() => {
@@ -184,7 +184,10 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
       positions.push(x, y, z);
       const starColor = new Color(star.atmospheric_color || "#FFFFFF");
       colors.push(starColor.r, starColor.g, starColor.b);
-      const visualSize = Math.max(0.3, Math.pow(2.0, -star.mag) * 2.5);
+      const MAX_STAR_SIZE = 30.0;
+      const visualSize = star.mag < 2.0 
+        ? Math.min(MAX_STAR_SIZE, Math.max(20.0, 60.0 - (star.mag * 30))) 
+        : Math.min(MAX_STAR_SIZE, Math.max(2.0, Math.pow(2.0, -star.mag) * 4.0));
       pointSizes.push(visualSize);
     });
     geometry.setAttribute("position", new BufferAttribute(new Float32Array(positions), 3));
@@ -217,8 +220,7 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
   }, [visibleStars]);
 
   const shaderUniforms = useMemo(() => ({
-    uTime: { value: 0.0 },
-    uOpacity: { value: 0.9 }
+    uTime: { value: 0.0 }
   }), []);
 
   useEffect(() => {
@@ -229,29 +231,34 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
   }, [clock, shaderUniforms.uTime]);
 
   const vertexShader = `
+    uniform float uTime;
     attribute float pointSizeAttribute;
     varying vec3 vColor;
-    uniform float uTime;
-    float rand(vec2 co){
-        return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-    }
+    varying float vOpacity;
+    
     void main() {
-      vColor = color;
+      vColor = color * 2.0;
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      float twinkleFactor = 0.7 + 0.3 * rand(vec2(position.x + uTime * 0.015, position.y));
-      gl_PointSize = pointSizeAttribute * twinkleFactor * (300.0 / -mvPosition.z);
+      float time = uTime * 0.1;
+      float randomVal = fract(sin(dot(position.xy + time, vec2(12.9898, 78.233))) * 43758.5453);
+      vOpacity = randomVal > 0.8 ? 0.8 : 1.0;
+      gl_PointSize = pointSizeAttribute * (300.0 / -mvPosition.z);
       gl_Position = projectionMatrix * mvPosition;
     }
   `;
 
   const fragmentShader = `
     varying vec3 vColor;
-    uniform float uOpacity;
+    varying float vOpacity;
+    
     void main() {
       float dist = length(gl_PointCoord - vec2(0.5));
       if (dist > 0.5) discard;
-      float strength = 1.0 - smoothstep(0.35, 0.5, dist);
-      gl_FragColor = vec4(vColor, strength * uOpacity);
+      
+      float glow = 1.0 - (dist * 1.5);
+      vec3 brightColor = vColor + (vec3(1.0) * glow * 0.5);
+      
+      gl_FragColor = vec4(brightColor, vOpacity);
     }
   `;
 
@@ -271,7 +278,7 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
       {brightStarLabels.map((label, index) => (
         <Billboard key={`${label.id}-${index}`} position={label.position} follow={true}>
           <Text
-            fontSize={CELESTIAL_SPHERE_RADIUS / 100}
+            fontSize={CELESTIAL_SPHERE_RADIUS / 80}
             color="#FFFFCC"
             anchorX="left"
             anchorY="middle"
@@ -358,9 +365,44 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate, obse
     if (observerLocation) {
       setLocation(observerLocation);
     } else {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        setLocation(position);
-      });
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          setLocation(position);
+        },
+        () => {
+          // Silently default to 0,0 if geolocation fails
+          const defaultPosition = {
+            coords: {
+              latitude: 0,
+              longitude: 0,
+              accuracy: 0,
+              altitude: null,
+              altitudeAccuracy: null,
+              heading: null,
+              speed: null,
+              toJSON() {
+                return {
+                  latitude: this.latitude,
+                  longitude: this.longitude,
+                  accuracy: this.accuracy,
+                  altitude: this.altitude,
+                  altitudeAccuracy: this.altitudeAccuracy,
+                  heading: this.heading,
+                  speed: this.speed
+                };
+              }
+            },
+            timestamp: Date.now(),
+            toJSON() {
+              return {
+                coords: this.coords,
+                timestamp: this.timestamp
+              };
+            }
+          };
+          setLocation(defaultPosition as GeolocationPosition);
+        }
+      );
     }
     const loader = new TextureLoader();
     loader.load('/moon.jpg', (texture: THREE.Texture) => {
@@ -369,7 +411,7 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate, obse
   }, []);
 
   const camera = useMemo(() => {
-    const camInstance = new ThreePerspectiveCamera(70, typeof window !== "undefined" ? window.innerWidth / window.innerHeight : 1, 0.1, CELESTIAL_SPHERE_RADIUS * 5 );
+    const camInstance = new ThreePerspectiveCamera(60, typeof window !== "undefined" ? window.innerWidth / window.innerHeight : 1, 0.1, CELESTIAL_SPHERE_RADIUS * 5 );
     camInstance.position.set(...origin.toArray());
     camInstance.position.y = earthRadius * 1.5; 
     camInstance.position.z = earthRadius * 1.5;

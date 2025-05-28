@@ -7,13 +7,12 @@ import react from "@/assets/react.svg";
 import typescript from "@/assets/typescript.svg";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Rss } from "lucide-react";
-import { Volume2 } from "lucide-react";
-import { VolumeOff } from "lucide-react";
+import { ArrowRight, Rss, Volume2, VolumeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import psylocke from "@/assets/img.png";
+import psylocke from "@/assets/psylocke.png";
+import { Glow, GlowCapture } from "@codaworks/react-glow";
 
 interface CarouselItemData {
   name: string;
@@ -42,98 +41,143 @@ const carouselItems: CarouselItemData[] = [
 export default function Home() {
   const [hoveredVideo, setHoveredVideo] = useState<number | null>(null);
   const [muted, setMuted] = useState(true);
+  
   return (
-    <>
-      <main className="flex flex-col items-center px-4 pb-20 text-center md:px-8">
-        <div className="flex flex-col items-center justify-center px-8 text-3xl md:px-0 md:text-5xl">
-          <h1 className="pt-12 font-medium text-white md:pt-16 md:text-6xl">Hey there! I'm Melody!</h1>
-          <p className="max-w-xl pt-8 font-normal text-gray-300 text-lg md:text-xl">
-            I'm a Fullstack & Java/Kotlin Developer passionate about creating unique and ambitious projects!
-          </p>
-          <div className="mt-12 w-full max-w-md rounded-lg border border-sky-500/20 bg-black/10 p-6 backdrop-blur-sm">
-            <h2 className="font-normal text-base text-white md:text-lg">Technologies I Enjoy Working With:</h2>
-            <div className="z-10 flex flex-row justify-center gap-4 pt-6">
-              <Image
-                src={java}
-                alt="java"
-                className="h-12 w-12 transition-all duration-300 hover:scale-110"
-                loading="eager"
-              />
-              <Image
-                src={kotlin}
-                alt="kotlin"
-                className="h-12 w-12 transition-all duration-300 hover:scale-110"
-                loading="eager"
-              />
-              <Image
-                src={typescript}
-                alt="ts"
-                className="h-12 w-12 transition-all duration-300 hover:scale-110"
-                loading="eager"
-              />
-              <Image
-                src={javascript}
-                alt="js"
-                className="h-12 w-12 transition-all duration-300 hover:scale-110"
-                loading="eager"
-              />
-              <Image
-                src={react}
-                alt="react"
-                className="h-12 w-12 transition-all duration-300 hover:scale-110"
-                loading="eager"
-              />
+    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black text-white overflow-hidden">
+      {/* Decorative Elements */}
+      <div className="fixed inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/50 pointer-events-none"></div>
+      
+      <div className="relative z-10 flex flex-col items-center px-4 pb-20 text-center md:px-8">
+        {/* Header Section */}
+        <GlowCapture>
+          <Glow color="rgb(147, 51, 234)">
+            <div className="relative flex flex-col items-center justify-center px-8 text-3xl md:px-0 md:text-5xl">
+
+              <h1 className="pt-12 font-bold text-white md:pt-16 md:text-6xl bg-clip-text bg-gradient-to-r from-white to-purple-200">
+                Hey there! I'm Melody!
+              </h1>
+              <h2 className="max-w-xl pt-8 font-normal text-lg text-purple-200/90 md:text-xl">
+                I'm a Fullstack & Java/Kotlin Developer passionate about creating unique and ambitious projects!
+              </h2>
+
+              <div className="mt-12 w-full max-w-md rounded-2xl border border-purple-500/20 bg-purple-950/10 p-8 backdrop-blur-xl shadow-[0_0_50px_-12px] shadow-purple-500/30 glow:border-purple-500/40 glow:bg-purple-900/20 transition-all">
+                <h2 className="font-medium text-2xl text-purple-200 mb-6">
+                  I specialize in these languages!
+                </h2>
+                <div className="z-10 flex flex-row justify-center gap-6 pt-2">
+                  <div className="pointer-events-none group transition-all">
+                    <Image
+                      src={java}
+                      alt="java"
+                      className="h-12 w-12 transition-all duration-300 hover:scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      loading="eager"
+                    />
+                  </div>
+                  <div className="pointer-events-none">
+                    <Image
+                      src={kotlin}
+                      alt="kotlin"
+                      className="h-12 w-12 transition-all duration-300 hover:scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      loading="eager"
+                    />
+                  </div>
+                  <div className="pointer-events-none">
+                    <Image
+                      src={typescript}
+                      alt="ts"
+                      className="h-12 w-12 transition-all duration-300 hover:scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      loading="eager"
+                    />
+                  </div>
+                  <div className="pointer-events-none">
+                    <Image
+                      src={javascript}
+                      alt="js"
+                      className="h-12 w-12 transition-all duration-300 hover:scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      loading="eager"
+                    />
+                  </div>
+                  <div className="pointer-events-none">
+                    <Image
+                      src={react}
+                      alt="react"
+                      className="h-12 w-12 transition-all duration-300 hover:scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* TODO: add this when i write something */}
+              {/*<div className="z-10 flex flex-row gap-8 pt-12 font-normal text-lg">*/}
+              {/*  <Link*/}
+              {/*    className="group flex flex-row items-center justify-center gap-2 rounded-xl bg-white/10 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:bg-white/20 backdrop-blur-sm"*/}
+              {/*    href="/about/"*/}
+              {/*  >*/}
+              {/*    Learn More */}
+              {/*    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />*/}
+              {/*  </Link>*/}
+              {/*</div>*/}
             </div>
-          </div>
-          <div className="z-10 flex flex-row gap-8 pt-12 font-normal text-lg text-white">
-            <Link
-              className="flex flex-row items-center justify-center gap-2 px-4 py-2 font-medium text-white transition-all duration-300 hover:scale-105 hover:underline"
-              href="/about/"
-            >
-              Learn More <ArrowRight size={18} />
-            </Link>
-            <Link
-              className="flex flex-row items-center justify-center gap-2 px-4 py-2 font-medium text-purple-300 transition-all duration-300 hover:scale-105 hover:underline"
-              href="/stars/"
-            >
-              3D Sky <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
+          </Glow>
+        </GlowCapture>
 
         {/* Psylocke.gg Section */}
-        <section className="z-10 mt-20 w-full max-w-4xl rounded-xl border border-purple-600/50 bg-gradient-to-br from-purple-950/30 via-black/20 to-black/20 p-10 shadow-lg shadow-purple-900/20 backdrop-blur-md">
-          <h2 className="mb-6 text-center font-semibold text-3xl text-purple-300">
-            PSYLOCKE.GG - Your Marvel Rivals Companion!
-          </h2>
-          <p className="mx-auto mb-6 max-w-2xl text-center text-gray-300">
-            Take a look at the best Marvel Rivals website with nearly every feature from in the game!
-          </p>
-          <p className="text-gray-300">
-            Your go-to source for the latest cosmetics, characters and more!
-          </p>
-          <a href="https://psylocke.gg" target="_blank" rel="noopener noreferrer">
-            <Image src={psylocke} alt="Psylocke.gg" className="mx-auto hover:border-purple-700 border-transparent border-1 hover:scale-103 transition-all duration-150 rounded-lg mt-8 w-full max-w-2xl" />
-          </a>
-          <div className="mt-8 flex justify-center">
-            <Link
-              href="https://psylocke.gg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 font-medium text-white transition-all duration-300 hover:scale-105 hover:bg-purple-700"
-            >
-              PSYLOCKE.GG <ArrowRight size={18} />
-            </Link>
-          </div>
-        </section>
-        <section className="z-10 mx-auto mt-20 w-full justify-center">
-          <h2 className="mb-8 text-center font-semibold text-2xl text-purple-300">
-            Java/Kotlin Plugin Development!
-          </h2>
-          <div className="relative flex flex-row gap-4 pb-4 justify-center">
-            {carouselItems.map((data, index) => {
-              const isFirst = index === 0;
-              const isLast = index === carouselItems.length - 1;
+        <GlowCapture>
+          <Glow color="rgb(147, 51, 234)">
+            <section className="relative z-10 mt-32 w-full max-w-4xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform rounded-full bg-purple-600/20 px-6 py-2 backdrop-blur-xl border border-purple-500/30">
+                <span className="text-md font-medium text-purple-200">Featured Project</span>
+              </div>
+              
+              <h2 className="mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-center font-bold text-4xl text-transparent">
+                PSYLOCKE.GG
+              </h2>
+              <h3 className="mb-6 text-center font-medium text-xl text-purple-200">
+                Your Marvel Rivals Companion!
+              </h3>
+              <p className="mx-auto mb-6 max-w-2xl text-center text-purple-100/80">
+                Take a look at the best Marvel Rivals website with an extensive array of features such as an extensive item database, all the latest comics from the game and all the latest details on the characters from the game!
+              </p>
+              <p className="text-purple-200/70 text-center">
+                Your go-to source for the latest cosmetics, characters and more!
+              </p>
+              <div className="pointer-events-none mt-8 rounded-xl overflow-hidden border border-purple-500/30 shadow-[0_0_30px_-12px] shadow-purple-500/30">
+                <Image 
+                  src={psylocke} 
+                  alt="Psylocke.gg" 
+                  className="w-full transition-transform duration-700 hover:scale-105" 
+                />
+              </div>
+              <div className="mt-8 flex justify-center">
+                <Link
+                  href="https://psylocke.gg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-xl bg-purple-600/50 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:bg-purple-500 shadow-[0_0_20px_-4px] shadow-purple-500/30"
+                >
+                  Visit PSYLOCKE.GG 
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </section>
+          </Glow>
+        </GlowCapture>
+
+        {/* Plugin Development Section */}
+        <section className="z-10 mx-auto mt-32 w-full justify-center">
+          <GlowCapture>
+            <div className="relative mb-16">
+              <h2 className="text-center font-bold text-3xl bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                Java/Kotlin Plugin Development
+              </h2>
+            </div>
+
+          </GlowCapture>
+
+            <div className="relative flex flex-row gap-6 pb-4 justify-center">
+              {carouselItems.map((data, index) => {
+                const isFirst = index === 0;
+                const isLast = index === carouselItems.length - 1;
 
               return (
                 <div key={index} className={cn(
@@ -212,7 +256,7 @@ export default function Home() {
             })}
           </div>
         </section>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }

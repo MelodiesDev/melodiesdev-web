@@ -11,6 +11,7 @@
     "lint:fix": "biome check --write --unsafe"
   },
   "dependencies": {
+    "@codaworks/react-glow": "^1.0.6",
     "@icons-pack/react-simple-icons": "^10.2.0",
     "@radix-ui/react-popover": "^1.1.13",
     "@radix-ui/react-slot": "^1.1.2",

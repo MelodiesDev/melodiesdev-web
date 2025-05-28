@@ -101,21 +101,33 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="absolute bottom-0 z-[60] flex w-full flex-row items-center justify-between bg-gradient-to-t from-black/50 to-transparent p-4">
-    <div className="flex flex-row items-center gap-2">
-      <p className="text-sm text-gray-300">made with ❤️ by</p>
-      <LinkButton href="https://x.com/melodiesdev" label="My Twitter!">
-        <span className="text-sm text-purple-700">melody</span>
+  <div className="absolute bottom-0 z-[60] flex w-full flex-row items-center justify-between bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 py-5 backdrop-blur-sm">
+    <div className="flex flex-row items-center gap-4">
+      <p className="text-sm font-medium text-gray-200">made with 
+        <span className="mx-1 animate-pulse text-red-500">❤️</span> 
+        by
+      </p>
+      <LinkButton 
+        href="https://x.com/melodiesdev" 
+        label="My Twitter!"
+        className="group"
+      >
+        <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">melody</span>
       </LinkButton>
-      <p className="text-sm text-gray-300">|</p>
+      <div className="h-4 w-[1px] bg-gradient-to-t from-purple-500 to-pink-500" />
       <LinkButton
         href="https://psylocke.gg"
         label="Psylocke.gg - Marvel Rivals Guides"
+        className="group"
       >
-        <span className="text-sm text-purple-700">PSYLOCKE.GG</span>
+        <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">PSYLOCKE.GG</span>
       </LinkButton>
     </div>
-    <LinkButton href="/contact" label="Contact Page Button" className="text-sm text-gray-300">
+    <LinkButton 
+      href="/contact" 
+      label="Contact Page Button" 
+      className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
+    >
       <span>Contact Me</span>
     </LinkButton>
   </div>
@@ -139,10 +151,14 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
             }
           );
         },
-        (error) => {
-          console.error("Error fetching geolocation: ", error);
-          // Optionally set a default or handle the error
-          // For now, if geolocation fails and no manual location, it will use 0,0 or whatever DateTimePicker defaults to
+        () => {
+          // Silently default to 0,0 if geolocation fails
+          setManualLocation((prevLocation) => 
+            prevLocation ? prevLocation : {
+              latitude: 0,
+              longitude: 0,
+            }
+          );
         }
       );
     }
