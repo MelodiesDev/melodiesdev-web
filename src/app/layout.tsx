@@ -4,7 +4,7 @@ import "./globals.css";
 import Icon from "@/app/icon.png";
 import MelodiesDev from "@/assets/melodiesdev.svg";
 import { THREEDComponents } from "@/components/3DComponents";
-import { DateTimePicker } from "@/components/DateTimePicker";
+import { DateTimeLocationPicker } from "@/components/DateTimeLocationPicker";
 import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ import { Nunito } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 
 // Initialize Nunito font
 const nunito = Nunito({
@@ -123,14 +123,46 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => {
   const [overrideDate, setOverrideDate] = useState<Date>(new Date());
+  const [manualLocation, setManualLocation] = useState<{ latitude: number; longitude: number } | undefined>();
+
+  useEffect(() => {
+    // Fetch initial geolocation if no manual location is set
+    if (!manualLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Only set if manualLocation hasn't been set by something else in the meantime
+          // (e.g. user starts typing before geolocation returns)
+          setManualLocation((prevLocation) => 
+            prevLocation ? prevLocation : { 
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            }
+          );
+        },
+        (error) => {
+          console.error("Error fetching geolocation: ", error);
+          // Optionally set a default or handle the error
+          // For now, if geolocation fails and no manual location, it will use 0,0 or whatever DateTimePicker defaults to
+        }
+      );
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+  const handleLocationChange = (location: { latitude: number; longitude: number }) => {
+    setManualLocation(location);
+  };
 
   return (
     <html lang="en" className={nunito.variable}>
       <body className={cn("radial-gradient ark font-sans", nunito.className)}>
-        <DateTimePicker onDateTimeChangeAction={setOverrideDate} />
+        <DateTimeLocationPicker 
+          onDateTimeChangeAction={setOverrideDate} 
+          manualLocation={manualLocation}
+          onLocationChangeAction={handleLocationChange}
+        />
         <section className="radial-gradient relative min-h-screen min-w-full overflow-hidden">
           <div className="pointer-events-none absolute inset-0">
-            <THREEDComponents overrideDate={overrideDate} />
+            <THREEDComponents overrideDate={overrideDate} observerLocation={manualLocation ? {coords: manualLocation, timestamp: Date.now()} as GeolocationPosition : undefined} />
           </div>
           <Header />
           <div className="relative z-50 h-full w-full">{children}</div>
