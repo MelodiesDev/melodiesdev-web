@@ -25,6 +25,7 @@ import MoonRenderer from './MoonRenderer';
 import PlanetsRenderer from './PlanetsRenderer'; 
 // import SkyDome from './SkyDome'; 
 import { Star, SkyCultureData, ConstellationData, AsterismData, ReferenceEphemerisEntry } from './Types';
+import { getLocationFromIP } from "@/lib/geolocation";
 
 const CELESTIAL_SPHERE_RADIUS = 1500; 
 const MIN_VISUAL_MAGNITUDE = 7; 
@@ -143,6 +144,7 @@ const ConstellationLinesRenderer: FC<{ stars: Star[]; constellationLinesData: Co
                 color="lightblue"
                 anchorX="center"
                 anchorY="middle"
+                fillOpacity={0.8}
                 maxWidth={200}
               >
                 {item.nameInfo.name}
@@ -280,8 +282,9 @@ const NightSkyRenderer: FC<{ stars: Star[] }> = ({ stars }) => {
           <Text
             fontSize={CELESTIAL_SPHERE_RADIUS / 80}
             color="#FFFFCC"
-            anchorX="left"
+            anchorX="center"
             anchorY="middle"
+            fillOpacity={0.75}
             material-depthWrite={false}
           >
             {label.id}
@@ -365,50 +368,44 @@ export const THREEDComponents: FC<THREEDComponentsProps> = ({ overrideDate, obse
     if (observerLocation) {
       setLocation(observerLocation);
     } else {
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          setLocation(position);
-        },
-        () => {
-          // Silently default to 0,0 if geolocation fails
-          const defaultPosition = {
-            coords: {
-              latitude: 0,
-              longitude: 0,
-              accuracy: 0,
-              altitude: null,
-              altitudeAccuracy: null,
-              heading: null,
-              speed: null,
-              toJSON() {
-                return {
-                  latitude: this.latitude,
-                  longitude: this.longitude,
-                  accuracy: this.accuracy,
-                  altitude: this.altitude,
-                  altitudeAccuracy: this.altitudeAccuracy,
-                  heading: this.heading,
-                  speed: this.speed
-                };
-              }
-            },
-            timestamp: Date.now(),
+      getLocationFromIP().then(ipLocation => {
+        const defaultPosition = {
+          coords: {
+            latitude: ipLocation.latitude,
+            longitude: ipLocation.longitude,
+            accuracy: 0,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
             toJSON() {
               return {
-                coords: this.coords,
-                timestamp: this.timestamp
+                latitude: this.latitude,
+                longitude: this.longitude,
+                accuracy: this.accuracy,
+                altitude: this.altitude,
+                altitudeAccuracy: this.altitudeAccuracy,
+                heading: this.heading,
+                speed: this.speed
               };
             }
-          };
-          setLocation(defaultPosition as GeolocationPosition);
-        }
-      );
+          },
+          timestamp: Date.now(),
+          toJSON() {
+            return {
+              coords: this.coords,
+              timestamp: this.timestamp
+            };
+          }
+        };
+        setLocation(defaultPosition as GeolocationPosition);
+      });
     }
     const loader = new TextureLoader();
     loader.load('/moon.jpg', (texture: THREE.Texture) => {
       setMoonTexture(texture);
     });
-  }, []);
+  }, [observerLocation]);
 
   const camera = useMemo(() => {
     const camInstance = new ThreePerspectiveCamera(60, typeof window !== "undefined" ? window.innerWidth / window.innerHeight : 1, 0.1, CELESTIAL_SPHERE_RADIUS * 5 );

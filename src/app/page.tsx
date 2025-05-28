@@ -166,95 +166,100 @@ export default function Home() {
         {/* Plugin Development Section */}
         <section className="z-10 mx-auto mt-32 w-full justify-center">
           <GlowCapture>
-            <div className="relative mb-16">
-              <h2 className="text-center font-bold text-3xl bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Java/Kotlin Plugin Development
-              </h2>
-            </div>
-
-          </GlowCapture>
-
-            <div className="relative flex flex-row gap-6 pb-4 justify-center">
-              {carouselItems.map((data, index) => {
-                const isFirst = index === 0;
-                const isLast = index === carouselItems.length - 1;
-
-              return (
-                <div key={index} className={cn(
-                  "w-80 flex-shrink-0 md:w-96",
-                  "transition-all duration-150",
-                  isFirst && "mask-l-from-80% hover:mask-none",
-                  isLast && "mask-r-from-80% hover:mask-none",
-                )}>
-                  <Card className="overflow-hidden rounded-lg border border-transparent bg-black/30 transition-all focus-within:border-purple-500/50 hover:border-purple-500/50">
-                    <CardContent className="relative aspect-video p-0 transition-all hover:brightness-115">
-                      <div
-                        className="relative h-full w-full"
-                        onMouseOver={() => {
-                          setHoveredVideo(index);
-                        }}
-                        onFocus={() => {
-                          setHoveredVideo(index);
-                        }}
-                        onMouseOut={(event) => {
-                          const target = event.relatedTarget as Element;
-                          if (!target?.closest(".mute-button")) {
-                            setHoveredVideo(null);
-                          }
-                        }}
-                        onBlur={(event) => {
-                          const target = event.relatedTarget as Element;
-                          if (!target?.closest(".mute-button")) {
-                            setHoveredVideo(null);
-                          }
-                        }}
-                      >
-                        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
-                          <div className="flex h-full flex-col justify-end">
-                            <h3 className="font-semibold text-lg text-white">{data.name}</h3>
-                            <p className="text-gray-200 text-sm">{data.subtitle}</p>
-                          </div>
-                        </div>
-                        <video
-                          src={data.video}
-                          className="aspect-video h-full w-full object-cover"
-                          onMouseOver={(event) => {
-                            event.currentTarget.play();
-                          }}
-                          onFocus={(event) => {
-                            event.currentTarget.play();
-                          }}
-                          onMouseOut={(event) => {
-                            const target = event.relatedTarget as Element;
-                            if (!target?.closest(".mute-button")) {
-                              event.currentTarget.pause();
-                            }
-                          }}
-                          onBlur={(event) => {
-                            const target = event.relatedTarget as Element;
-                            if (!target?.closest(".mute-button")) {
-                              event.currentTarget.pause();
-                            }
-                          }}
-                          loop={true}
-                          muted={muted}
-                        />
-                        {hoveredVideo === index && (
-                          <button
-                            type="button"
-                            onClick={() => setMuted(!muted)}
-                            className="mute-button absolute right-3 bottom-3 z-20 rounded-full bg-black/50 p-1.5 text-white transition-all hover:scale-110 hover:bg-black/80"
-                          >
-                            {muted ? <VolumeOff size={16} /> : <Volume2 size={16} />}
-                          </button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+            <Glow color="rgb(147, 51, 234)">
+              <section className="relative z-10 w-full max-w-6xl mx-auto rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform rounded-full bg-purple-600/20 px-6 py-2 backdrop-blur-xl border border-purple-500/30">
+                  <span className="text-md font-medium text-purple-200">Plugin Showcase</span>
+                  <p className="text-xs text-purple-300/80 mt-0.5">Hover over the cards to preview!</p>
                 </div>
-              );
-            })}
-          </div>
+                <h2 className="mb-4 text-center font-bold text-3xl bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                  Java/Kotlin Plugin Development
+                </h2>
+                <p className="text-center text-purple-200/80 mb-8 max-w-2xl mx-auto">
+                  Check out some of my Minecraft plugins featuring custom mechanics and particle effects!
+                </p>
+                <div className="relative flex flex-row gap-6 pb-4 justify-center">
+                  {carouselItems.map((data, index) => {
+                    const isFirst = index === 0;
+                    const isLast = index === carouselItems.length - 1;
+
+                    return (
+                      <div key={index} className={cn(
+                        "w-80 flex-shrink-0 md:w-96",
+                        "transition-all duration-150",
+                      )}>
+                        <Card className="overflow-hidden rounded-lg border border-purple-500/20 bg-black/30 transition-all focus-within:border-purple-500/50 hover:border-purple-500/50 shadow-[0_0_30px_-12px] shadow-purple-500/30">
+                          <CardContent className="relative aspect-video p-0 transition-all hover:brightness-115">
+                            <div
+                              className="relative h-full w-full"
+                              onMouseOver={() => {
+                                setHoveredVideo(index);
+                              }}
+                              onFocus={() => {
+                                setHoveredVideo(index);
+                              }}
+                              onMouseOut={(event) => {
+                                const target = event.relatedTarget as Element;
+                                if (!target?.closest(".mute-button")) {
+                                  setHoveredVideo(null);
+                                }
+                              }}
+                              onBlur={(event) => {
+                                const target = event.relatedTarget as Element;
+                                if (!target?.closest(".mute-button")) {
+                                  setHoveredVideo(null);
+                                }
+                              }}
+                            >
+                              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
+                                <div className="flex h-full flex-col justify-end">
+                                  <h3 className="font-semibold text-lg text-white">{data.name}</h3>
+                                  <p className="text-gray-200 text-sm">{data.subtitle}</p>
+                                </div>
+                              </div>
+                              <video
+                                src={data.video}
+                                className="aspect-video h-full w-full object-cover"
+                                onMouseOver={(event) => {
+                                  event.currentTarget.play();
+                                }}
+                                onFocus={(event) => {
+                                  event.currentTarget.play();
+                                }}
+                                onMouseOut={(event) => {
+                                  const target = event.relatedTarget as Element;
+                                  if (!target?.closest(".mute-button")) {
+                                    event.currentTarget.pause();
+                                  }
+                                }}
+                                onBlur={(event) => {
+                                  const target = event.relatedTarget as Element;
+                                  if (!target?.closest(".mute-button")) {
+                                    event.currentTarget.pause();
+                                  }
+                                }}
+                                loop={true}
+                                muted={muted}
+                              />
+                              {hoveredVideo === index && (
+                                <button
+                                  type="button"
+                                  onClick={() => setMuted(!muted)}
+                                  className="mute-button absolute right-3 bottom-3 z-20 rounded-full bg-black/50 p-1.5 text-white transition-all hover:scale-110 hover:bg-black/80"
+                                >
+                                  {muted ? <VolumeOff size={16} /> : <Volume2 size={16} />}
+                                </button>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            </Glow>
+          </GlowCapture>
         </section>
       </div>
     </main>
