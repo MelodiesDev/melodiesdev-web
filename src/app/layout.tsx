@@ -8,7 +8,6 @@ import { DateTimeLocationPicker } from "@/components/DateTimeLocationPicker";
 import { LinkButton } from "@/components/LinkButton";
 import { NavButton } from "@/components/NavButton";
 import { cn } from "@/lib/utils";
-import { getLocationFromIP } from "@/lib/geolocation";
 import { SiGithub, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import { Brush } from "lucide-react";
 import type { Metadata } from "next";
@@ -139,11 +138,29 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
   const [manualLocation, setManualLocation] = useState<{ latitude: number; longitude: number } | undefined>();
 
   useEffect(() => {
-    // Fetch location from IP if no manual location is set
-    if (!manualLocation) {
-      getLocationFromIP().then(location => {
-        setManualLocation(location);
-      });
+    // Fetch initial geolocation if no manual location is set
+    if (!manualLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Only set if manualLocation hasn't been set by something else in the meantime
+          // (e.g. user starts typing before geolocation returns)
+          setManualLocation((prevLocation) => 
+            prevLocation ? prevLocation : { 
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            }
+          );
+        },
+        () => {
+          // Silently default to 0,0 if geolocation fails
+          setManualLocation((prevLocation) => 
+            prevLocation ? prevLocation : {
+              latitude: 0,
+              longitude: 0,
+            }
+          );
+        }
+      );
     }
   }, []); // Empty dependency array means this runs once on mount
 
