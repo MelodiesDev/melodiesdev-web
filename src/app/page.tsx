@@ -66,12 +66,12 @@ export default function Home() {
         <div className="flex w-full flex-col justify-center gap-4 lg:flex-row">
           <div className="flex w-full flex-col items-start justify-center gap-4 text-black">
             <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
-              <h1 className="text-4xl">Hey there! I'm Melody!</h1>
+              <h1 className="font-bold font-serif text-5xl">Hey there! I'm Melody!</h1>
               <div className="flex flex-row items-center gap-1">
-                <span className="max-w-xl font-normal text-xl">I've been creating</span>
+                <span className="max-w-xl font-semibold text-2xl">I've been creating</span>
                 <RotatingText
                   texts={["experiences", "worlds", "plugins", "games", "environments"]}
-                  mainClassName="bg-black align-middle text-white text-black overflow-hidden justify-center rounded-lg"
+                  mainClassName="bg-black text-2xl font-bold align-middle text-white text-black overflow-hidden justify-center rounded-lg"
                   staggerFrom={"first"}
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
@@ -81,11 +81,13 @@ export default function Home() {
                   transition={{ type: "spring", damping: 20, stiffness: 300 }}
                   rotationInterval={2000}
                 />
-                <span className="flex items-center">players love for the past</span>
-                <span className="rounded-lg bg-black px-2 text-white">{dayjs().from("2023-03-19", true)}</span>
+                <span className="flex items-center font-semibold text-2xl">players love for the past</span>
+                <span className="rounded-lg bg-black px-2 py-1 font-bold text-2xl text-white">
+                  {dayjs().from("2023-03-19", true)}
+                </span>
               </div>
 
-              <p className="font-medium">
+              <p className="font-medium text-xl">
                 If you like anything you see here please reach out I'd love to make something with you!
               </p>
             </div>
@@ -125,9 +127,11 @@ export default function Home() {
               <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
                 <div className="flex flex-col items-center gap-2 lg:flex-row">
                   <ArrowLeft />
-                  <h1 className="text-4xl">Connect with me here!</h1>
+                  <span className="font-serif text-4xl">Connect with me here!</span>
                 </div>
-                <p>If you like anything you see here please reach out I'd love to make something with you!</p>
+                <p className="text-xl">
+                  If you like anything you see here please reach out I'd love to make something with you!
+                </p>
               </div>
             </div>
             <div className="flex h-full w-full flex-row justify-between rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
@@ -154,7 +158,7 @@ export default function Home() {
           <div className="w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl xl:w-2/3">
             <div className="flex flex-col justify-between xl:flex-row">
               <div className="flex w-full flex-col items-start gap-2 text-left text-black">
-                <span className="font-bold text-3xl">Your Ultimate Marvel Rivals Companion!</span>
+                <span className="font-bold font-serif text-3xl">Your Ultimate Marvel Rivals Companion!</span>
                 <p className="max-w-3xl justify-center text-xl">
                   <span className="font-semibold">PSYLOCKE.GG</span> is a Marvel Rivals website that has an extensive
                   array of features such as a complete item database, voice line viewer, store tracker and all the
@@ -184,7 +188,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-4 xl:w-1/2">
             <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
-              <span className="font-bold text-2xl">Meta Horizon Worlds Creator Academy</span>
+              <span className="font-bold font-serif text-xl">Meta Horizon Worlds Creator Academy</span>
               <p className="text-xl">
                 I got the amazing oppertunity to fly out to San Francisco for the creator academy and meta connect and
                 won an award for Outstanding Visual Design for my game Locked In.
@@ -220,8 +224,8 @@ export default function Home() {
       <div className="container">
         <div className="z-10 w-full rounded-2xl border border-slate-200 p-8 text-black shadow-2xl backdrop-blur-xl">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
-            <h2 className="font-bold text-black text-xl lg:text-3xl">Minecraft Plugins</h2>
-            <p className="w-full lg:max-w-2xl">
+            <h2 className="font-bold font-serif text-black text-xl lg:text-5xl">Minecraft Plugins</h2>
+            <p className="w-full font-semibold text-xl">
               Check out some of my Minecraft plugins featuring custom mechanics and particle effects!
             </p>
           </div>

@@ -47,6 +47,9 @@
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
 
+  --font-sans: var(--font-noto);
+  --font-serif: var(--font-pridi);
+
   @keyframes breathing {
     0% {
       opacity: 0%;
@@ -161,10 +164,6 @@
       --background-start-rgb: 0, 0, 0;
       --background-end-rgb: 0, 0, 0;
     }
-  }
-
-  body {
-    font-family: "notoSans", sans-serif;
   }
 }
 

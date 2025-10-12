@@ -205,7 +205,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
         <span
           ref={measureRef}
           className={cn(
-            "pointer-events-none absolute whitespace-nowrap opacity-0 px-2",
+            "pointer-events-none absolute whitespace-nowrap px-2 py-1 opacity-0",
             splitBy === "lines" ? "flex w-full flex-col" : "inline-flex flex-wrap whitespace-pre-wrap"
           )}
           aria-hidden="true"
