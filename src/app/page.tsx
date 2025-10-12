@@ -43,9 +43,9 @@ export default function Home() {
   const [muted, setMuted] = useState(true);
   
   return (
-    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black text-white overflow-hidden">
+    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black text-white overflow-hidden">
       {/* Decorative Elements */}
-      <div className="fixed inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/50 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-linear-to-b from-transparent via-purple-900/20 to-black/50 pointer-events-none"></div>
       
       <div className="relative z-10 flex flex-col items-center px-4 pb-20 text-center md:px-8">
         {/* Header Section */}
@@ -53,7 +53,7 @@ export default function Home() {
           <Glow color="rgb(147, 51, 234)">
             <div className="relative flex flex-col items-center justify-center px-8 text-3xl md:px-0 md:text-5xl">
 
-              <h1 className="pt-12 font-bold text-white md:pt-16 md:text-6xl bg-clip-text bg-gradient-to-r from-white to-purple-200">
+              <h1 className="pt-12 font-bold text-white md:pt-16 md:text-6xl bg-clip-text bg-linear-to-r from-white to-purple-200">
                 Hey there! I'm Melody!
               </h1>
               <h2 className="max-w-xl pt-8 font-normal text-lg text-purple-200/90 md:text-xl">
@@ -124,12 +124,12 @@ export default function Home() {
         {/* Psylocke.gg Section */}
         <GlowCapture>
           <Glow color="rgb(147, 51, 234)">
-            <section className="relative z-10 mt-32 w-full max-w-4xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
+            <section className="relative z-10 mt-32 w-full max-w-4xl rounded-2xl border border-purple-500/30 bg-linear-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform rounded-full bg-purple-600/20 px-6 py-2 backdrop-blur-xl border border-purple-500/30">
                 <span className="text-md font-medium text-purple-200">Featured Project</span>
               </div>
               
-              <h2 className="mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-center font-bold text-4xl text-transparent">
+              <h2 className="mb-6 bg-linear-to-r from-white to-purple-200 bg-clip-text text-center font-bold text-4xl text-transparent">
                 PSYLOCKE.GG
               </h2>
               <h3 className="mb-6 text-center font-medium text-xl text-purple-200">
@@ -167,12 +167,12 @@ export default function Home() {
         <section className="z-10 mx-auto mt-32 w-full justify-center">
           <GlowCapture>
             <Glow color="rgb(147, 51, 234)">
-              <section className="relative z-10 w-full max-w-6xl mx-auto rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
+              <section className="relative z-10 w-full max-w-6xl mx-auto rounded-2xl border border-purple-500/30 bg-linear-to-br from-purple-950/40 via-purple-900/20 to-purple-950/40 p-12 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl glow:border-purple-500/50 glow:bg-purple-900/30">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform rounded-full bg-purple-600/20 px-6 py-2 backdrop-blur-xl border border-purple-500/30">
                   <span className="text-md font-medium text-purple-200">Plugin Showcase</span>
                   <p className="text-xs text-purple-300/80 mt-0.5">Hover over the cards to preview!</p>
                 </div>
-                <h2 className="mb-4 text-center font-bold text-3xl bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                <h2 className="mb-4 text-center font-bold text-3xl bg-linear-to-r from-white to-purple-200 bg-clip-text text-transparent">
                   Java/Kotlin Plugin Development
                 </h2>
                 <p className="text-center text-purple-200/80 mb-8 max-w-2xl mx-auto">
@@ -185,7 +185,7 @@ export default function Home() {
 
                     return (
                       <div key={index} className={cn(
-                        "w-80 flex-shrink-0 md:w-96",
+                        "w-80 shrink-0 md:w-96",
                         "transition-all duration-150",
                       )}>
                         <Card className="overflow-hidden rounded-lg border border-purple-500/20 bg-black/30 transition-all focus-within:border-purple-500/50 hover:border-purple-500/50 shadow-[0_0_30px_-12px] shadow-purple-500/30">
@@ -211,7 +211,7 @@ export default function Home() {
                                 }
                               }}
                             >
-                              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
+                              <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-t from-black/80 via-black/40 to-transparent p-4">
                                 <div className="flex h-full flex-col justify-end">
                                   <h3 className="font-semibold text-lg text-white">{data.name}</h3>
                                   <p className="text-gray-200 text-sm">{data.subtitle}</p>

@@ -101,7 +101,7 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="absolute bottom-0 z-[60] flex w-full flex-row items-center justify-between bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 py-5 backdrop-blur-sm">
+  <div className="absolute bottom-0 z-60 flex w-full flex-row items-center justify-between bg-linear-to-t from-black/80 via-black/50 to-transparent px-6 py-5 backdrop-blur-sm">
     <div className="flex flex-row items-center gap-4">
       <p className="text-sm font-medium text-gray-200">made with 
         <span className="mx-1 animate-pulse text-red-500">❤️</span> 
@@ -112,21 +112,21 @@ const Footer: FC = () => (
         label="My Twitter!"
         className="group"
       >
-        <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">melody</span>
+        <span className="bg-linear-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">melody</span>
       </LinkButton>
-      <div className="h-4 w-[1px] bg-gradient-to-t from-purple-500 to-pink-500" />
+      <div className="h-4 w-px bg-linear-to-t from-purple-500 to-pink-500" />
       <LinkButton
         href="https://psylocke.gg"
         label="Psylocke.gg - Marvel Rivals Guides"
         className="group"
       >
-        <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">PSYLOCKE.GG</span>
+        <span className="bg-linear-to-r from-purple-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent transition-all group-hover:from-pink-500 group-hover:to-purple-500">PSYLOCKE.GG</span>
       </LinkButton>
     </div>
     <LinkButton 
       href="/contact" 
       label="Contact Page Button" 
-      className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
+      className="rounded-full bg-linear-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
     >
       <span>Contact Me</span>
     </LinkButton>
@@ -171,15 +171,15 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
   return (
     <html lang="en" className={nunito.variable}>
       <body className={cn("radial-gradient ark font-sans", nunito.className)}>
-        <DateTimeLocationPicker 
-          onDateTimeChangeAction={setOverrideDate} 
-          manualLocation={manualLocation}
-          onLocationChangeAction={handleLocationChange}
-        />
+        {/*<DateTimeLocationPicker */}
+        {/*  onDateTimeChangeAction={setOverrideDate} */}
+        {/*  manualLocation={manualLocation}*/}
+        {/*  onLocationChangeAction={handleLocationChange}*/}
+        {/*/>*/}
         <section className="radial-gradient relative min-h-screen min-w-full overflow-hidden">
-          <div className="pointer-events-none absolute inset-0">
-            <THREEDComponents overrideDate={overrideDate} observerLocation={manualLocation ? {coords: manualLocation, timestamp: Date.now()} as GeolocationPosition : undefined} />
-          </div>
+          {/*<div className="pointer-events-none absolute inset-0">*/}
+          {/*  <THREEDComponents overrideDate={overrideDate} observerLocation={manualLocation ? {coords: manualLocation, timestamp: Date.now()} as GeolocationPosition : undefined} />*/}
+          {/*</div>*/}
           <Header />
           <div className="relative z-50 h-full w-full">{children}</div>
           <Footer />

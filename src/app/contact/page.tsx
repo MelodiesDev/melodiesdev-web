@@ -13,15 +13,15 @@ export default function Contact() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black text-white overflow-hidden">
+    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black text-white overflow-hidden">
       {/* Decorative Elements */}
-      <div className="fixed inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/50 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-linear-to-b from-transparent via-purple-900/20 to-black/50 pointer-events-none"></div>
       
       <div className="relative z-10 flex flex-col items-center px-4 pb-20 text-center md:px-8">
         <GlowCapture>
           <Glow color="rgb(147, 51, 234)">
             <div className="relative flex flex-col items-center justify-center px-8 md:px-0">
-              <h1 className="pt-12 font-bold text-4xl md:text-5xl bg-clip-text bg-gradient-to-r from-white to-purple-200">
+              <h1 className="pt-12 font-bold text-4xl md:text-5xl bg-clip-text bg-linear-to-r from-white to-purple-200">
                 Got a question? Contact me!
               </h1>
               <h2 className="max-w-xl pt-4 font-normal text-base text-purple-200/90">
