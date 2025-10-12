@@ -105,7 +105,7 @@
   }
 
   .radial-gradient {
-    background-image: radial-gradient(#321f67 0%, #1f1342 50%, #120b21 100%);
+    background-image: radial-gradient(#000000 10%, #3a3a3a 35%, #ffffff 80%);
   }
 
   .radial-gradient {
@@ -121,18 +121,6 @@
     100% {
       background-position: 200% 50%;
     }
-  }
-
-  .animated-gradient-mask {
-    position: relative;
-    display: inline-block;
-    /*background: linear-gradient(90deg, #0000ff, #ff00ff, #800080);*/
-    background: url("/background.jpg");
-    background-size: 500%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-animation 30s linear infinite;
   }
 
   .radial-gradient2 {
@@ -153,7 +141,7 @@
   }
 
   body {
-    font-family: "Nunito", sans-serif;
+    font-family: "notoSans", sans-serif;
   }
 }
 

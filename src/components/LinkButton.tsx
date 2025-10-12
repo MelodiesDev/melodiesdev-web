@@ -14,7 +14,7 @@ export function LinkButton({
 }>) {
   return (
     <Link className={cn("group", className)} target="_blank" href={href} aria-label={label} rel="noreferrer">
-      <div className="group-hover:-translate-y-1 group-hover:-rotate-12 text-white transition-all">{children}</div>
+      <div className="group-hover:-translate-y-1 group-hover:-rotate-12 transition-all">{children}</div>
     </Link>
   );
 }
