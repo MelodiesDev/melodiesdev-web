@@ -1,33 +1,33 @@
 // Define star interface based on bright_stars.json structure
 export interface Star {
-  id: string; 
-  mag: number; 
-  x: number; 
-  y: number; 
-  z: number; 
-  color: string; 
-  atmospheric_color: string; 
-  temperature: number; 
-  spect: string; 
-  ci: string; 
-  hip?: number; 
-  con?: string; 
-  size?: number; 
-  dist?: number; 
-  ra?: number; 
-  dec?: number; 
-  lum?: number; 
+  id: string;
+  mag: number;
+  x: number;
+  y: number;
+  z: number;
+  color: string;
+  atmospheric_color: string;
+  temperature: number;
+  spect: string;
+  ci: string;
+  hip?: number;
+  con?: string;
+  size?: number;
+  dist?: number;
+  ra?: number;
+  dec?: number;
+  lum?: number;
 }
 
 export interface ConstellationData {
   id: string;
-  lines: number[][]; 
+  lines: number[][];
   common_name?: {
     english?: string;
     native?: string;
-    [key: string]: string | undefined; 
+    [key: string]: string | undefined;
   };
-  image?: { 
+  image?: {
     file: string;
     size?: [number, number];
     anchors?: Array<{ pos: [number, number]; hip: number }>;
@@ -37,7 +37,7 @@ export interface ConstellationData {
 export interface SkyCultureData {
   id: string;
   constellations?: ConstellationData[];
-  asterisms?: AsterismData[]; 
+  asterisms?: AsterismData[];
 }
 
 export interface AsterismData {
@@ -51,8 +51,8 @@ export interface AsterismData {
 
 export interface PlanetOrbitalElements {
   name: string;
-  semimajor_axis_au?: number; 
-  semimajor_axis_km?: number; 
+  semimajor_axis_au?: number;
+  semimajor_axis_km?: number;
   orbital_eccentricity: number;
   orbital_inclination_degrees: number;
   longitude_of_ascending_node_deg: number;
@@ -60,13 +60,13 @@ export interface PlanetOrbitalElements {
   mean_anomaly_at_epoch_deg: number;
   orbital_period_days: number;
   color?: string;
-  magnitude?: number | null; 
+  magnitude?: number | null;
 }
 
 export interface ReferenceEphemerisEntry {
   id: string;
   name: string;
-  distance?: { fromEarth?: { au?: string; km?: string; } };
+  distance?: { fromEarth?: { au?: string; km?: string } };
   position: {
     equatorial: {
       rightAscension: { hours: string; string: string };
@@ -87,6 +87,6 @@ export interface ReferenceEphemerisData {
 
 // Planetary Bodies Data Structure (if specific structure is known for the root JSON)
 export interface PlanetaryBodiesFileData {
-    epoch_jd: number;
-    planets: PlanetOrbitalElements[];
-} 
+  epoch_jd: number;
+  planets: PlanetOrbitalElements[];
+}
