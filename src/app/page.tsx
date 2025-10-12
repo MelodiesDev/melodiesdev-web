@@ -65,7 +65,7 @@ export default function Home() {
       <div className="container">
         <div className="flex w-full flex-col justify-center gap-4 lg:flex-row">
           <div className="flex w-full flex-col items-start justify-center gap-4 text-black">
-            <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-[0_0_50px_-12px] shadow-purple-500/30 backdrop-blur-xl transition-all">
+            <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
               <h1 className="text-4xl">Hey there! I'm Melody!</h1>
               <div className="flex flex-row items-center gap-1">
                 <span className="max-w-xl font-normal text-xl">I've been creating</span>
@@ -90,8 +90,8 @@ export default function Home() {
               </p>
             </div>
             <div className="flex w-full flex-row gap-4">
-              <div className="flex flex-col items-center gap-2 border border-slate-200 p-8 shadow-[0_0_50px_-12px] shadow-purple-500/30 backdrop-blur-xl transition-all">
-                <div className="grid grid-cols-3 items-center justify-center gap-4">
+              <div className="flex flex-col items-center gap-2 border border-slate-200 p-8 shadow-2xl backdrop-blur-xl transition-all">
+                <div className="grid grid-cols-2 items-center justify-center gap-4">
                   <LinkButton
                     href="https://x.com/melodiesdev"
                     label="My Twitter!"
@@ -122,7 +122,7 @@ export default function Home() {
                   </LinkButton>
                 </div>
               </div>
-              <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-[0_0_50px_-12px] shadow-purple-500/30 backdrop-blur-xl transition-all">
+              <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
                 <div className="flex flex-col items-center gap-2 lg:flex-row">
                   <ArrowLeft />
                   <h1 className="text-4xl">Connect with me here!</h1>
@@ -130,7 +130,7 @@ export default function Home() {
                 <p>If you like anything you see here please reach out I'd love to make something with you!</p>
               </div>
             </div>
-            <div className="flex h-full w-full flex-row justify-between rounded-lg border border-slate-200 p-8 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl">
+            <div className="flex h-full w-full flex-row justify-between rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
               <SiJavascript size={32} className="transition-transform hover:scale-110" />
               <SiKotlin size={32} className="transition-transform hover:scale-110" />
               <SiDocker size={32} className="transition-transform hover:scale-110" />
@@ -151,7 +151,7 @@ export default function Home() {
       {/* Projects Section */}
       <div className="container">
         <div className="flex w-full flex-col gap-4 xl:flex-row xl:justify-between">
-          <div className="w-full rounded-lg border border-slate-200 p-8 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl xl:w-2/3">
+          <div className="w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl xl:w-2/3">
             <div className="flex flex-col justify-between xl:flex-row">
               <div className="flex w-full flex-col items-start gap-2 text-left text-black">
                 <span className="font-bold text-3xl">Your Ultimate Marvel Rivals Companion!</span>
@@ -163,7 +163,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="pointer-events-none mt-8 overflow-hidden rounded-lg shadow-[0_0_30px_-12px] shadow-purple-500/30">
+            <div className="pointer-events-none mt-8 overflow-hidden rounded-lg shadow-2xl">
               <Image
                 src={psylocke}
                 alt="Psylocke.gg"
@@ -175,7 +175,7 @@ export default function Home() {
                 href="https://psylocke.gg"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-[0_0_20px_-4px] shadow-purple-500/30 transition-all duration-100 hover:scale-105"
+                className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-2xl transition-all duration-100 hover:scale-105"
               >
                 Visit PSYLOCKE.GG
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -183,16 +183,16 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col gap-4 xl:w-1/2">
-            <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl">
+            <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
               <span className="font-bold text-2xl">Meta Horizon Worlds Creator Academy</span>
               <p className="text-xl">
                 I got the amazing oppertunity to fly out to San Francisco for the creator academy and meta connect and
                 won an award for Outstanding Visual Design for my game Locked In.
               </p>
             </div>
-            <div className="h-full w-full rounded-lg border border-slate-200 p-8 shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl">
+            <div className="h-full w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
               <div className="flex h-full flex-col justify-between">
-                <div className="pointer-events-none mt-8 overflow-hidden rounded-lg shadow-[0_0_30px_-12px] shadow-purple-500/30">
+                <div className="pointer-events-none mt-8 overflow-hidden rounded-lg shadow-2xl">
                   <Image
                     src={lockedin}
                     alt="locked in"
@@ -204,7 +204,7 @@ export default function Home() {
                     href="https://horizon.meta.com/world/4080898192123460"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-[0_0_20px_-4px] shadow-purple-500/30 transition-all duration-100 hover:scale-105"
+                    className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-2xl transition-all duration-100 hover:scale-105"
                   >
                     Play Locked In
                     <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -218,7 +218,7 @@ export default function Home() {
 
       {/* Minecraft Plugins Section */}
       <div className="container">
-        <div className="z-10 w-full rounded-2xl border border-slate-200 p-8 text-black shadow-[0_0_100px_-12px] shadow-purple-500/20 backdrop-blur-xl">
+        <div className="z-10 w-full rounded-2xl border border-slate-200 p-8 text-black shadow-2xl backdrop-blur-xl">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <h2 className="font-bold text-black text-xl lg:text-3xl">Minecraft Plugins</h2>
             <p className="w-full lg:max-w-2xl">
@@ -228,7 +228,7 @@ export default function Home() {
           <div className="relative flex flex-col items-center justify-center gap-6 xl:flex-row">
             {carouselItems.map((data, index) => (
               <div key={data.name} className={cn("w-80 shrink-0 md:w-96", "transition-all duration-150")}>
-                <Card className="overflow-hidden rounded-lg shadow-[0_0_30px_-12px] shadow-purple-500/30 transition-all">
+                <Card className="overflow-hidden rounded-lg shadow-2xl transition-all">
                   <CardContent className="relative aspect-video h-full p-0 transition-all hover:brightness-115">
                     <button
                       type="button"

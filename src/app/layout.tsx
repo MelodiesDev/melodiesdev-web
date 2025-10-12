@@ -59,7 +59,7 @@ const Header: FC = () => (
       <Link href="/">
         <Image
           loading="eager"
-          className="size-24 w-fit drop-shadow-2xl drop-shadow-purple-500/30 invert transition-all hover:scale-105"
+          className="size-24 w-fit shadow-2xl invert transition-all hover:scale-105"
           src={MelodiesDev}
           alt="MelodiesDev"
         />
@@ -94,7 +94,7 @@ const Footer: FC = () => (
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => (
   <html lang="en" className={notoSans.variable}>
-    <body className={cn("overflow-x-hidden font-sans")}>
+    <body className={cn("overflow-x-hidden bg-[#FBFAF5] font-sans")}>
       <section className="relative flex min-h-screen w-full max-w-full flex-col overflow-hidden">
         <div
           className="absolute top-0 right-0 left-0 z-0 h-screen overflow-hidden"
@@ -120,13 +120,12 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => (
         >
           <Particles
             particleColors={["#000000"]}
-            particleCount={300}
-            particleSpread={10}
-            speed={0.005}
-            particleBaseSize={100}
+            particleCount={200}
+            particleSpread={200}
+            speed={0.5}
+            particleBaseSize={150}
             moveParticlesOnHover={false}
             alphaParticles={false}
-            cameraDistance={10}
             disableRotation={false}
           />
         </div>
