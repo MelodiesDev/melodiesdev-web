@@ -7,6 +7,7 @@ interface ThreadsProps {
   amplitude?: number;
   distance?: number;
   enableMouseInteraction?: boolean;
+  rotation?: number;
 }
 
 const vertexShader = `
@@ -28,12 +29,11 @@ uniform vec3 uColor;
 uniform float uAmplitude;
 uniform float uDistance;
 uniform vec2 uMouse;
+uniform float uRotation;
 
 #define PI 3.1415926538
 
 const int u_line_count = 5;
-const float u_line_width = 7.0;
-const float u_line_blur = 10.0;
 
 float Perlin2D(vec2 P) {
     vec2 Pi = floor(P);
@@ -61,22 +61,24 @@ float pixel(float count, vec2 resolution) {
 }
 
 float lineFn(vec2 st, float width, float perc, float offset, vec2 mouse, float time, float amplitude, float distance) {
+    // Scale line width based on viewport width with minimum width to avoid getting too small
+    float scaledWidth = max(width * (iResolution.x / 1920.0) * 2.0, width * 1.5);
     float finalAmplitude = amplitude * (1.0 + (mouse.y - 0.5) * 0.2);
     float time_scaled = time / 5.0 + (mouse.x - 0.5) * 1.0;
     
     float xnoise = Perlin2D(vec2(time_scaled + st.x * 2.0, perc * 3.0)) * 0.5;
     
-    float y = 0.2 + perc * 0.6 + xnoise * finalAmplitude * 0.1;
+    float y = 0.4 + perc * 0.2 + xnoise * finalAmplitude * 0.03;
 
     float line_start = smoothstep(
-        y + (width / 2.0),
+        y + (scaledWidth / 2.0),
         y,
         st.y
     );
 
     float line_end = smoothstep(
         y,
-        y - (width / 2.0),
+        y - (scaledWidth / 2.0),
         st.y
     );
 
@@ -85,13 +87,23 @@ float lineFn(vec2 st, float width, float perc, float offset, vec2 mouse, float t
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
+    
+    // Rotate UV coordinates based on uRotation uniform
+    vec2 center = vec2(0.5);
+    uv -= center;
+    float angle = uRotation;
+    float cosA = cos(angle);
+    float sinA = sin(angle);
+    mat2 rotation = mat2(cosA, -sinA, sinA, cosA);
+    uv = rotation * uv;
+    uv += center;
 
     float line_strength = 1.0;
     for (int i = 0; i < u_line_count; i++) {
         float p = float(i) / float(u_line_count);
         line_strength *= (1.0 - lineFn(
             uv,
-            u_line_width * pixel(1.0, iResolution.xy),
+            2.0 * pixel(1.0, iResolution.xy),
             p,
             (PI * 1.0) * p,
             uMouse,
@@ -115,6 +127,7 @@ const Threads: React.FC<ThreadsProps> = ({
   amplitude = 1,
   distance = 0,
   enableMouseInteraction = false,
+  rotation = 0,
   ...rest
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,6 +157,7 @@ const Threads: React.FC<ThreadsProps> = ({
         uAmplitude: { value: amplitude },
         uDistance: { value: distance },
         uMouse: { value: new Float32Array([0.5, 0.5]) },
+        uRotation: { value: rotation },
       },
     });
 
@@ -205,9 +219,9 @@ const Threads: React.FC<ThreadsProps> = ({
       if (container.contains(gl.canvas)) container.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [color, amplitude, distance, enableMouseInteraction]);
+  }, [color, amplitude, distance, enableMouseInteraction, rotation]);
 
-  return <div ref={containerRef} className="relative h-full w-full" {...rest} />;
+  return <div ref={containerRef} className="absolute inset-0 h-full w-full" {...rest} />;
 };
 
 export default Threads;
