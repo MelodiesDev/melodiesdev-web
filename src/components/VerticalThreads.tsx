@@ -155,7 +155,7 @@ const VerticalThreads: React.FC<VerticalThreadsProps> = ({
   ...rest
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationFrameId = useRef<number>();
+  const animationFrameId = useRef<number>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
