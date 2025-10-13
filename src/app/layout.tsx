@@ -2,7 +2,6 @@
 
 import "./globals.css";
 import { Brush } from "lucide-react";
-import type { Metadata } from "next";
 import { Noto_Sans, Pridi } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,23 +75,19 @@ const Header: FC = () => (
 );
 
 const Footer: FC = () => (
-  <div className="mt-8 bg-linear-to-t from-black/80 via-black/50 to-transparent">
+  <div className="mt-8 text-black">
     <div className="flex w-full flex-row items-center justify-between p-8">
       <div className="flex flex-row items-center gap-2">
-        <p className="font-medium text-gray-200 text-sm">
+        <p className="font-bold text-sm">
           made with
           <span className="mx-1 animate-pulse">❤️</span>
           by
         </p>
         <LinkButton href="https://x.com/melodiesdev" label="My Twitter!" className="group">
-          <span className="font-bold text-gray-200 text-sm">melody</span>
+          <span className="font-bold text-sm">melody</span>
         </LinkButton>
       </div>
-      <LinkButton
-        href="/contact"
-        label="Contact Page Button"
-        className="font-medium text-gray-200 text-sm transition-all"
-      >
+      <LinkButton href="/contact" label="Contact Page Button" className="font-bold text-sm transition-all">
         <span>Contact Me</span>
       </LinkButton>
     </div>

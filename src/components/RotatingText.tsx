@@ -106,7 +106,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
         characters: [part],
         needsSpace: i !== arr.length - 1,
       }));
-    }, [texts, currentTextIndex, splitBy]);
+    }, [texts, currentTextIndex, splitBy, splitIntoCharacters]);
 
     const getStaggerDelay = useCallback(
       (index: number, totalChars: number): number => {
@@ -186,7 +186,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
         const width = measureRef.current.getBoundingClientRect().width;
         setContainerWidth(width);
       }
-    }, [currentTextIndex, texts]);
+    }, []);
 
     return (
       <motion.span

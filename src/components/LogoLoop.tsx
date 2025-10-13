@@ -180,7 +180,7 @@ const useAnimationLoop = (
       }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, isHovered, pauseOnHover]);
+  }, [targetVelocity, seqWidth, isHovered, pauseOnHover, trackRef.current]);
 };
 
 export const LogoLoop = React.memo<LogoLoopProps>(
@@ -332,7 +332,6 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover && "group/item overflow-visible"
             )}
             key={key}
-            role="listitem"
           >
             {inner}
           </li>
@@ -347,7 +346,6 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           <ul
             className="flex items-center"
             key={`copy-${copyIndex}`}
-            role="list"
             aria-hidden={copyIndex > 0}
             ref={copyIndex === 0 ? seqRef : undefined}
           >

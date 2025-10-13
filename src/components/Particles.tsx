@@ -297,7 +297,6 @@ const Particles: React.FC<ParticlesProps> = ({
     alphaParticles,
     particleBaseSize,
     sizeRandomness,
-    cameraDistance,
     disableRotation,
     particleColors,
   ]);

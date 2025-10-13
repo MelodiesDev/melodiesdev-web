@@ -13,7 +13,7 @@ export function LinkButton({
   className?: string;
 }>) {
   return (
-    <Link className={cn("group", className)} target="_blank" href={href} aria-label={label} rel="noreferrer">
+    <Link className={cn("group", className)} href={href} aria-label={label} rel="noreferrer">
       <div className="group-hover:-translate-y-1 group-hover:-rotate-12 transition-all">{children}</div>
     </Link>
   );

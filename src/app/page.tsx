@@ -3,10 +3,10 @@
 import { SiGithub, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ArrowLeft, ArrowRight, Volume2, VolumeOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUp, Volume2, VolumeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   SiBlender,
   SiDocker,
@@ -66,12 +66,12 @@ export default function Home() {
         <div className="flex w-full flex-col justify-center gap-4 lg:flex-row">
           <div className="flex w-full flex-col items-start justify-center gap-4 text-black">
             <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
-              <h1 className="font-bold font-serif text-5xl">Hey there! I'm Melody!</h1>
-              <div className="flex flex-row items-center gap-1">
-                <span className="max-w-xl font-semibold text-2xl">I've been creating</span>
+              <h1 className="font-bold font-serif text-2xl lg:text-5xl">Hey there! I'm Melody!</h1>
+              <div className="flex flex-col items-center gap-1 lg:flex-row">
+                <span className="max-w-xl font-semibold text-md lg:text-2xl">I've been creating</span>
                 <RotatingText
                   texts={["experiences", "worlds", "plugins", "games", "environments"]}
-                  mainClassName="bg-black text-2xl font-bold align-middle text-white text-black overflow-hidden justify-center rounded-lg"
+                  mainClassName="bg-black text-md lg:text-2xl font-bold align-middle text-white text-black overflow-hidden justify-center rounded-lg"
                   staggerFrom={"first"}
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
@@ -81,17 +81,19 @@ export default function Home() {
                   transition={{ type: "spring", damping: 20, stiffness: 300 }}
                   rotationInterval={2000}
                 />
-                <span className="flex items-center font-semibold text-2xl">players love for the past</span>
-                <span className="rounded-lg bg-black px-2 py-1 font-bold text-2xl text-white">
-                  {dayjs().from("2023-03-19", true)}
-                </span>
+                <div className="flex flex-row gap-2 lg:flex-none">
+                  <span className="flex items-center font-semibold text-md lg:text-2xl">players love for the past</span>
+                  <span className="rounded-lg bg-black px-2 py-1 font-bold text-sm text-white lg:text-2xl">
+                    {dayjs().from("2023-03-19", true)}
+                  </span>
+                </div>
               </div>
 
-              <p className="font-medium text-xl">
+              <p className="font-medium text-md lg:text-xl">
                 If you like anything you see here please reach out I'd love to make something with you!
               </p>
             </div>
-            <div className="flex w-full flex-row gap-4">
+            <div className="flex w-full flex-col gap-4 lg:flex-row">
               <div className="flex flex-col items-center gap-2 border border-slate-200 p-8 shadow-2xl backdrop-blur-xl transition-all">
                 <div className="grid grid-cols-2 items-center justify-center gap-4">
                   <LinkButton
@@ -126,7 +128,8 @@ export default function Home() {
               </div>
               <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
                 <div className="flex flex-col items-center gap-2 lg:flex-row">
-                  <ArrowLeft />
+                  <ArrowLeft className="hidden lg:block" />
+                  <ArrowUp className="visible lg:hidden" />
                   <span className="font-serif text-4xl">Connect with me here!</span>
                 </div>
                 <p className="text-xl">
@@ -134,7 +137,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="flex h-full w-full flex-row justify-between rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="grid h-full w-full grid-cols-6 justify-between gap-2 rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl lg:flex lg:flex-row">
               <SiJavascript size={32} className="transition-transform hover:scale-110" />
               <SiKotlin size={32} className="transition-transform hover:scale-110" />
               <SiDocker size={32} className="transition-transform hover:scale-110" />
