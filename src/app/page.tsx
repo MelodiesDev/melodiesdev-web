@@ -193,7 +193,7 @@ export default function Home() {
             <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
               <span className="font-bold font-serif text-xl">Meta Horizon Worlds Creator Academy</span>
               <p className="text-xl">
-                I got the amazing oppertunity to fly out to San Francisco for the creator academy and meta connect and
+                I got the amazing opportunity to fly out to San Francisco for the creator academy and meta connect and
                 won an award for Outstanding Visual Design for my game Locked In.
               </p>
             </div>
