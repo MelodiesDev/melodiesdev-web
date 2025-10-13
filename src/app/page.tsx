@@ -68,7 +68,7 @@ export default function Home() {
             <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 text-left shadow-2xl backdrop-blur-xl transition-all">
               <h1 className="font-bold font-serif text-2xl lg:text-5xl">Hey there! I'm Melody!</h1>
               <div className="flex flex-col items-center gap-1 lg:flex-row">
-                <span className="max-w-xl font-semibold text-md lg:text-2xl">I've been creating</span>
+                <span className="font-semibold text-md lg:text-2xl">I've been creating</span>
                 <RotatingText
                   texts={["experiences", "worlds", "plugins", "games", "environments"]}
                   mainClassName="bg-black text-md lg:text-2xl font-bold align-middle text-white text-black overflow-hidden justify-center rounded-lg"
@@ -237,8 +237,8 @@ export default function Home() {
               <div key={data.name} className={cn("w-80 shrink-0 md:w-96", "transition-all duration-150")}>
                 <Card className="overflow-hidden rounded-lg shadow-2xl transition-all">
                   <CardContent className="relative aspect-video h-full p-0 transition-all hover:brightness-115">
-                    <button
-                      type="button"
+                    {/** biome-ignore lint/a11y/noStaticElementInteractions: Not directly interacting so it's fine */}
+                    <div
                       className="relative h-full w-full"
                       onMouseOver={() => {
                         setHoveredVideo(index);
@@ -293,12 +293,12 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={() => setMuted(!muted)}
-                          className="mute-button absolute right-3 bottom-3 z-20 rounded-full bg-black/50 p-1.5 text-white transition-all hover:scale-110 hover:bg-black/80"
+                          className="mute-button absolute right-3 bottom-3 z-20 rounded-lg bg-black/50 p-1.5 text-white transition-all hover:scale-110 hover:bg-black/80"
                         >
                           {muted ? <VolumeOff size={16} /> : <Volume2 size={16} />}
                         </button>
                       )}
-                    </button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

@@ -72,13 +72,13 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
     const [containerWidth, setContainerWidth] = useState<number>(0);
     const measureRef = useRef<HTMLSpanElement>(null);
 
-    const splitIntoCharacters = (text: string): string[] => {
+    const splitIntoCharacters = useCallback((text: string): string[] => {
       if (typeof Intl !== "undefined" && Intl.Segmenter) {
         const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
         return Array.from(segmenter.segment(text), (segment) => segment.segment);
       }
       return Array.from(text);
-    };
+    }, []);
 
     const elements = useMemo(() => {
       const currentText: string = texts[currentTextIndex];
@@ -181,12 +181,13 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
       return () => clearInterval(intervalId);
     }, [next, rotationInterval, auto]);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Needed as a hook
     useEffect(() => {
       if (measureRef.current) {
         const width = measureRef.current.getBoundingClientRect().width;
         setContainerWidth(width);
       }
-    }, []);
+    }, [currentTextIndex, texts]);
 
     return (
       <motion.span
@@ -233,9 +234,11 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
                 .slice(0, wordIndex)
                 .reduce((sum, word) => sum + word.characters.length, 0);
               return (
+                // biome-ignore lint/suspicious/noArrayIndexKey: It's fine
                 <span key={wordIndex} className={cn("inline-flex", splitLevelClassName)}>
                   {wordObj.characters.map((char, charIndex) => (
                     <motion.span
+                      // biome-ignore lint/suspicious/noArrayIndexKey: It's fine
                       key={charIndex}
                       initial={initial}
                       animate={animate}
