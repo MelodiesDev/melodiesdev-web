@@ -22,6 +22,9 @@ import {
   SiSqlite,
   SiTypescript,
 } from "react-icons/si";
+import awardshow from "@/assets/awardshow.jpg";
+import farminc1 from "@/assets/farminc1.png";
+import farminc2 from "@/assets/farminc2.png";
 import lockedin from "@/assets/lockedin.png";
 import psylocke from "@/assets/psylocke.png";
 import { LinkButton } from "@/components/LinkButton";
@@ -88,10 +91,6 @@ export default function Home() {
                   </span>
                 </div>
               </div>
-
-              <p className="font-medium text-md lg:text-xl">
-                If you like anything you see here please reach out I'd love to make something with you!
-              </p>
             </div>
             <div className="flex w-full flex-col gap-4 lg:flex-row">
               <div className="flex flex-col items-center gap-2 border border-slate-200 p-8 shadow-2xl backdrop-blur-xl transition-all">
@@ -157,12 +156,12 @@ export default function Home() {
 
       {/* Projects Section */}
       <div className="container">
-        <div className="flex w-full flex-col gap-4 xl:flex-row xl:justify-between">
-          <div className="w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl xl:w-2/3">
+        <div className="flex w-full flex-col gap-16">
+          <div className="w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
             <div className="flex flex-col justify-between xl:flex-row">
               <div className="flex w-full flex-col items-start gap-2 text-left text-black">
-                <span className="font-bold font-serif text-3xl">Your Ultimate Marvel Rivals Companion!</span>
-                <p className="max-w-3xl justify-center text-xl">
+                <span className="pb-2 font-bold font-serif text-3xl">Your Ultimate Marvel Rivals Companion!</span>
+                <p className="max-w-3xl justify-center text-2xl">
                   <span className="font-semibold">PSYLOCKE.GG</span> is a Marvel Rivals website that has an extensive
                   array of features such as a complete item database, voice line viewer, store tracker and all the
                   latest details on new characters added to the game!
@@ -189,33 +188,57 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col gap-4 xl:w-1/2">
-            <div className="flex w-full flex-col gap-2 rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
-              <span className="font-bold font-serif text-xl">Meta Horizon Worlds Creator Academy</span>
-              <p className="text-xl">
+          <div className="h-full w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="flex h-full flex-col justify-between text-black">
+              <span className="pb-2 font-bold font-serif text-4xl">Meta Horizon Worlds Creator Academy</span>
+              <p className="text-2xl">
                 I got the amazing opportunity to fly out to San Francisco for the creator academy and meta connect and
                 won an award for Outstanding Visual Design for my game Locked In.
               </p>
+              <div className="pointer-events-none mt-8 rounded-lg shadow-2xl">
+                <Image src={lockedin} alt="locked in" className="" />
+                <Image className="border border-slate-200 border-t-2" src={awardshow} alt="Outstanding Visual Design" />
+              </div>
+              <div className="mt-8 flex justify-center">
+                <Link
+                  href="https://horizon.meta.com/world/4080898192123460"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-2xl transition-all duration-100 hover:scale-105"
+                >
+                  Play Locked In
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
             </div>
-            <div className="h-full w-full rounded-lg border border-slate-200 p-8 shadow-2xl backdrop-blur-xl">
-              <div className="flex h-full flex-col justify-between">
-                <div className="pointer-events-none mt-8 overflow-hidden rounded-lg shadow-2xl">
-                  <Image
-                    src={lockedin}
-                    alt="locked in"
-                    className="w-full transition-transform duration-700 hover:scale-105"
-                  />
-                </div>
-                <div className="mt-8 flex justify-center">
-                  <Link
-                    href="https://horizon.meta.com/world/4080898192123460"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-2xl transition-all duration-100 hover:scale-105"
-                  >
-                    Play Locked In
-                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-                  </Link>
+          </div>
+          <div className="flex h-full w-full flex-col gap-4 rounded-lg border border-slate-200 p-8 text-black shadow-2xl backdrop-blur-xl">
+            <span className="font-bold font-serif text-4xl">Horizon Worlds Competitions</span>
+            <div className="flex flex-row gap-2">
+              <Image className="aspect-square h-fit" src={farminc1} alt="farminc1" />
+              <div className="flex w-full flex-col">
+                <Image className="border border-slate-200" src={farminc2} alt="farminc2" />
+                <div className="flex flex-row p-4">
+                  <p className="text-2xl">
+                    After the horizon academy myself and my partner Stella were approached by{" "}
+                    <Link href="https://foad.gg" target="_blank" className="font-semibold">
+                      FOAD
+                    </Link>{" "}
+                    to develop games for the platform. Our first game Farm Inc. won a competition category for "Best use
+                    of Camera API" and we're super proud of it. The next game we've made is called Rummager which i'll
+                    show off at the end of 2025.
+                  </p>
+                  <div className="flex w-full flex-col justify-end">
+                    <Link
+                      href="https://horizon.meta.com/world/4096893230523956"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex h-fit w-full items-center gap-2 rounded-lg bg-black px-2 py-2 font-medium text-white shadow-2xl transition-all duration-100 hover:scale-105"
+                    >
+                      Play Farm Inc.
+                      <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
