@@ -152,7 +152,6 @@ const Particles: React.FC<ParticlesProps> = ({
   alphaParticles = false,
   particleBaseSize = 100,
   sizeRandomness = 1,
-  cameraDistance = 20,
   disableRotation = false,
   className,
 }) => {
