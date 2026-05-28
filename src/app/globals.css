@@ -13,100 +13,62 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
+  /* shadcn / radix token bridge — consumed by src/components/ui/* */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-
   --font-sans: var(--font-noto);
   --font-serif: var(--font-pridi);
 
+  /* Warm-tinted neutrals — tuned to the cream paper background */
+  --color-ink: oklch(0.18 0.012 75);
+  --color-ink-soft: oklch(0.32 0.01 75);
+  --color-rule: oklch(0.9 0.006 80);
+  --color-rule-strong: oklch(0.82 0.008 80);
+  --color-paper: #fbfaf5;
+  --color-paper-warm: #f6f3ea;
+
   @keyframes breathing {
-    0% {
-      opacity: 0%;
-      transform: scaleX(102%);
-    }
-    25% {
-      opacity: 30%;
-      transform: scaleX(100%);
-    }
-    50% {
-      opacity: 50%;
-      transform: scaleX(100%);
-    }
-    75% {
-      opacity: 30%;
-      transform: scaleX(100%);
-    }
-    100% {
-      opacity: 0%;
-      transform: scaleX(102%);
-    }
+    0% { opacity: 0%; transform: scaleX(102%); }
+    25% { opacity: 30%; transform: scaleX(100%); }
+    50% { opacity: 50%; transform: scaleX(100%); }
+    75% { opacity: 30%; transform: scaleX(100%); }
+    100% { opacity: 0%; transform: scaleX(102%); }
   }
   @keyframes cloudmovement {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
   }
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-rule, currentcolor);
   }
 }
 
 @layer utilities {
-  :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 214, 219, 220;
-    --background-end-rgb: 255, 255, 255;
-  }
-
   .container {
     width: 100%;
     margin-left: auto;
@@ -129,47 +91,11 @@
       padding-right: 4rem;
     }
   }
-
-  .radial-gradient {
-    background-image: radial-gradient(#000000 10%, #3a3a3a 35%, #ffffff 80%);
-  }
-
-  .radial-gradient {
-    width: auto;
-    height: auto;
-  }
-
-  @keyframes gradient-animation {
-    0% {
-      background-position: 0 50%;
-    }
-
-    100% {
-      background-position: 200% 50%;
-    }
-  }
-
-  .radial-gradient2 {
-    background-image: radial-gradient(#1f1342 0%, #120b21 100%);
-  }
-
-  .radial-gradient2 {
-    width: 550px;
-    height: 550px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-start-rgb: 0, 0, 0;
-      --background-end-rgb: 0, 0, 0;
-    }
-  }
 }
 
 @layer base {
   :root {
-    /* Light theme - day sky inspired */
+    /* shadcn HSL bridge — only consumed by src/components/ui/* */
     --background: 260 40% 97%;
     --foreground: 260 30% 20%;
     --card: 260 40% 97%;
@@ -189,51 +115,12 @@
     --border: 260 30% 85%;
     --input: 260 30% 85%;
     --ring: 260 60% 50%;
-    /* Chart colors matching the tech stack icons */
-    --chart-1: 20 80% 50%; /* Java orange */
-    --chart-2: 300 60% 50%; /* Xamarin purple */
-    --chart-3: 200 85% 45%; /* TypeScript blue */
-    --chart-4: 45 90% 50%; /* JavaScript yellow */
-    --chart-5: 195 85% 50%; /* React blue */
     --radius: 0.5rem;
-  }
-
-  .dark {
-    /* Dark theme - starry night inspired */
-    --background: 260 40% 8%;
-    --foreground: 260 20% 98%;
-    --card: 260 40% 10%;
-    --card-foreground: 260 20% 98%;
-    --popover: 260 40% 10%;
-    --popover-foreground: 260 20% 98%;
-    --primary: 260 70% 65%;
-    --primary-foreground: 260 20% 98%;
-    --secondary: 180 60% 60%;
-    --secondary-foreground: 260 20% 98%;
-    --muted: 260 30% 20%;
-    --muted-foreground: 260 20% 70%;
-    --accent: 180 70% 60%;
-    --accent-foreground: 260 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 260 30% 20%;
-    --input: 260 30% 20%;
-    --ring: 260 70% 65%;
-    /* Chart colors for dark mode - brighter variants */
-    --chart-1: 20 85% 60%; /* Java orange */
-    --chart-2: 300 70% 60%; /* Xamarin purple */
-    --chart-3: 200 90% 55%; /* TypeScript blue */
-    --chart-4: 45 95% 60%; /* JavaScript yellow */
-    --chart-5: 195 90% 60%; /* React blue */
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-paper font-sans text-ink;
   }
 }

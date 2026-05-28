@@ -39,9 +39,7 @@
         "useSortedClasses": {
           "fix": "safe",
           "level": "warn"
-        },
-        "useConsistentArrowReturn": "error",
-        "noUselessCatchBinding": "error"
+        }
       },
       "style": {
         "noNonNullAssertion": "off"
